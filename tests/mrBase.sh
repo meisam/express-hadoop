@@ -29,7 +29,7 @@ NODES=$(cat $CONF);
 
 OUTPUT=${PREFIX}_${USAGE}_hdf.L${ISLOC}.B${ISBYPASS}.R${ISREC}.r${REPLICA};
 echo "OUTPUT = $OUTPUT"
-$EXEC jar $JAR hdf.test.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $USAGE ${PREFIX}_hdf-data ${OUTPUT} ${ISLOC} ${ISBYPASS} ${ISREC};
+$EXEC jar $JAR express.hdd.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $USAGE ${PREFIX}_hdf-data ${OUTPUT} ${ISLOC} ${ISBYPASS} ${ISREC};
 $EXEC job -history all $OUTPUT > $LOGDIR/$OUTPUT;
 echo $OUTPUT >> $SUMMARY;
 cat $LOGDIR/$OUTPUT|egrep -e "JobConf|Average|Finished" >> $SUMMARY;

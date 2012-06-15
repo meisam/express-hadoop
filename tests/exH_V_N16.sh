@@ -8,7 +8,7 @@ BIN=$HADOOP/bin;
 CONF=$HADOOP/conf/slaves;
 CONF_DIR=$HADOOP/conf;
 EXEC=$HADOOP/bin/hadoop;
-JAR=$HADOOP/hdf_micro.jar;
+JAR=$HADOOP/express-hadoop.jar;
 LOGDIR=/mnt/common/siyuan/log;
 
 format() {
@@ -39,11 +39,11 @@ hdfgen() {
     $EXEC fs -rmr $DIR;
 
     echo "@write test";
-    $HADOOP/bin/hadoop jar $JAR hdf.test.HDFGen 1024,128,128 0,0,0 8,128,128 16,1,1 $DIR;
+    $HADOOP/bin/hadoop jar $JAR express.hdd.HDFGen 1024,128,128 0,0,0 8,128,128 16,1,1 $DIR;
     $EXEC fs -rmr $DIR;
 
     echo "@generate test data";
-    $HADOOP/bin/hadoop jar $JAR hdf.test.HDFGen 16384,512,2048 0,0,0 8,512,1024 32,1,1 $DIR;
+    $HADOOP/bin/hadoop jar $JAR express.hdd.HDFGen 16384,512,2048 0,0,0 8,512,1024 32,1,1 $DIR;
 }
 
 reset4test() {

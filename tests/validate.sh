@@ -8,7 +8,7 @@ BIN=$HADOOP/bin;
 CONF_DIR=$HADOOP/conf;
 CONF=$HADOOP/conf/slaves;
 EXEC=$HADOOP/bin/hadoop;
-JAR=$HADOOP/hdf_micro.jar;
+JAR=$HADOOP/express-hadoop.jar;
 NODES=$(cat $CONF);
 
 flush() {
@@ -36,7 +36,7 @@ hdfgen() {
 	$EXEC fs -rmr hdf-test;
 	
 	echo "@generate test data";
-	$HADOOP/bin/hadoop jar $JAR hdf.test.HDFGen 1024,512,2048 0,0,0 8,512,2048 8,1,1 hdf-test;
+	$HADOOP/bin/hadoop jar $JAR express.hdd.HDFGen 1024,512,2048 0,0,0 8,512,2048 8,1,1 hdf-test;
 }
 
 reset4test() {
@@ -53,9 +53,9 @@ reset4test;
 
 $EXEC fs -rmr mismatch.r1;
 flush "$NODES";
-$EXEC jar $JAR hdf.test.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 1024,512,128 hdf-test mismatch.r1 'true';
+$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 1024,512,128 hdf-test mismatch.r1 'true';
 
 $EXEC fs -rmr match.r1;
 flush "$NODES";
-$EXEC jar $JAR hdf.test.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 64,512,2048 hdf-test match.r1 'true';
+$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 64,512,2048 hdf-test match.r1 'true';
 

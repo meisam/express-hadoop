@@ -2,12 +2,12 @@
 
 TESTSDIR=$(dirname $0);
 
-sync_hdf_micro() {
-echo "copy hdf_micro.jar"; 
-scp ../hdf_micro.jar siyuan@mars.cs.iit.edu:./tmp;
-echo "copy hdf_micro.jar from mars:./tmp to hec:/mnt/common/siyuan/src/hadoop-1.0.1";
-ssh siyuan@mars.cs.iit.edu eval 'scp ./tmp/hdf_micro.jar siyuan@hec.cs.iit.edu:/mnt/common/siyuan/src/hadoop-1.0.1'; 
-ssh siyuan@mars.cs.iit.edu eval 'scp ./tmp/hdf_micro.jar siyuan@hec.cs.iit.edu:/mnt/common/siyuan/src/hadoop-1.0.1/lib'; 
+sync_express-hadoop() {
+echo "copy express-hadoop.jar"; 
+scp ../express-hadoop.jar siyuan@mars.cs.iit.edu:./tmp;
+echo "copy express-hadoop.jar from mars:./tmp to hec:/mnt/common/siyuan/src/hadoop-1.0.1";
+ssh siyuan@mars.cs.iit.edu eval 'scp ./tmp/express-hadoop.jar siyuan@hec.cs.iit.edu:/mnt/common/siyuan/src/hadoop-1.0.1'; 
+ssh siyuan@mars.cs.iit.edu eval 'scp ./tmp/express-hadoop.jar siyuan@hec.cs.iit.edu:/mnt/common/siyuan/src/hadoop-1.0.1/lib'; 
 }
 
 sync_core(){
@@ -37,7 +37,7 @@ while getopts "achs" OPTION
 do
     case $OPTION in
         a)
-			sync_hdf_micro;
+			sync_express-hadoop;
 			sync_core;
 			sync_tests;
             sync_tools;
@@ -47,7 +47,7 @@ do
           	sync_core;  
             ;;
         h)
-            sync_hdf_micro;
+            sync_express-hadoop;
             ;;
         s)
 			sync_tests;

@@ -24,7 +24,7 @@ HADOOP=/mnt/common/siyuan/src/hadoop-1.0.1;
 BIN=$HADOOP/bin;
 CONF=$HADOOP/conf/slaves;
 EXEC=$HADOOP/bin/hadoop;
-JAR=$HADOOP/hdf_micro.jar;
+JAR=$HADOOP/express-hadoop.jar;
 
 #echo "reload runtime";
 #$BIN/stop-all.sh;
@@ -33,14 +33,14 @@ JAR=$HADOOP/hdf_micro.jar;
 
 NODES=$(cat $CONF);
 #echo "@generate test data"
-#$EXEC jar $JAR hdf.test.HDFGen $DSIZE 0,0,0 $RSIZE $PSIZE ${PREFIX}hdf-data;
+#$EXEC jar $JAR express.hdd.HDFGen $DSIZE 0,0,0 $RSIZE $PSIZE ${PREFIX}hdf-data;
 
 echo "#replica = $REPLICA";
 for usage in $USAGES; do
 	flush "$NODES";
 	OUTPUT=${PREFIX}_${usage}_hdf.Loff.r${REPLICA};
 	echo "OUTPUT = $OUTPUT"
-	$EXEC jar $JAR hdf.test.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'false';
+	$EXEC jar $JAR express.hdd.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'false';
 	$EXEC job -history all $OUTPUT > $LDIR/$OUTPUT;
 	echo $OUTPUT >> $SUMMARY;
 	cat $LDIR/$OUTPUT|egrep -e "JobConf|Average|Finished" >> $SUMMARY;
@@ -49,7 +49,7 @@ for usage in $USAGES; do
 	echo "USAGE = $usage"
 	OUTPUT=${PREFIX}_${usage}_hdf.Lon.r${REPLICA};
 	echo "OUTPUT = $OUTPUT"
-	$EXEC jar $JAR hdf.test.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'true';
+	$EXEC jar $JAR express.hdd.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'true';
 	$EXEC job -history all $OUTPUT > $LDIR/$OUTPUT;
 	echo $OUTPUT >> $SUMMARY;
 	cat $LDIR/$OUTPUT|egrep -e "JobConf|Average|Finished" >> $SUMMARY;
@@ -57,7 +57,7 @@ for usage in $USAGES; do
 #	flush "$NODES";
 #	OUTPUT=${PREFIX}_${usage}_hdf.bypass.r${REPLICA};
 #	echo "OUTPUT = $OUTPUT"
-#	$EXEC jar $JAR hdf.test.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'false' 'true';
+#	$EXEC jar $JAR express.hdd.HDFMicroBenchmark $DSIZE 0,0,0 $RSIZE $PSIZE 0,0,0 $usage ${PREFIX}_hdf-data ${OUTPUT} 'false' 'true';
 #	$EXEC job -history all $OUTPUT > $LDIR/$OUTPUT;
 #	echo $OUTPUT >> $SUMMARY;
 #	cat $LDIR/$OUTPUT|egrep -e "JobConf|Average|Finished" >> $SUMMARY;

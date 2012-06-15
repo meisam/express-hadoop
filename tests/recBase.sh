@@ -44,7 +44,7 @@ set4hdfgen() {
     $EXEC fs -rmr $DIR;
 
     echo "@write test";
-    $HADOOP/bin/hadoop jar $JAR hdf.test.HDFGen 1024,128,128 0,0,0 8,128,128 16,1,1 $DIR;
+    $HADOOP/bin/hadoop jar $JAR express.hdd.HDFGen 1024,128,128 0,0,0 8,128,128 16,1,1 $DIR;
     $EXEC fs -rmr $DIR;
 }
 
@@ -56,7 +56,7 @@ hdfgen() {
 	
 	echo "";
     echo "DSIZE=$DSIZE, RSIZE=$RSIZE, PSIZE=$PSIZE, DIR=$DIR";
-    $HADOOP/bin/hadoop jar $JAR hdf.test.HDFGen $DSIZE 0,0,0 $RSIZE $PSIZE $DIR;
+    $HADOOP/bin/hadoop jar $JAR express.hdd.HDFGen $DSIZE 0,0,0 $RSIZE $PSIZE $DIR;
 }
 
 reset4test() {
