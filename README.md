@@ -42,7 +42,7 @@ hadoop-1.0.1, ant, patch
 <figure>
   <img src="http://upload.wikimedia.org/wikipedia/en/4/48/HyperspectralCube.jpg" title="Graphic representation of hyperspectral data" alt="Graphic representation of hyperspectral data" height="160" width="160" />
   
-  <br><figcaption><b>Graphic representation of hyperspectral data</b></figcaption>
+  <br><figcaption><b>Figure 1</b> Graphic representation of hyperspectral data</figcaption>
 </figure>
 
 The image consists of two spatial dimensions and one spectral dimension. Terabytes of such data have been produced daily by EOS satellites since 1997. The accumulation of global hyperspectral datasets now reaches the petabytes scale. 
@@ -52,14 +52,14 @@ To analyze the data for a special purpose like geometric correction or mineral s
 <figure>
   <a href="https://picasaweb.google.com/lh/photo/xvx5i6rLQwl2BNaZ4ps5pNMTjNZETYmyPJy0liipFm0?feat=embedwebsite"><img src="https://lh5.googleusercontent.com/-KE6-S-6Jq6M/T9Jo0BKGbbI/AAAAAAAAAAk/KlekTZmfBmE/s640/mot.png" title="Data Usage and Storage Partitioning" height="514" width="640" /></a>
   
-  <br><figcaption><b>Data Usage and Storage Partitioning</b></figcaption>
+  <br><figcaption><b>Figure 2</b> Data Usage and Storage Partitioning</figcaption>
 </figure>
 
-1. In traditional MapReduce, the data partitioning and distribution are not directly controlled by the user. So when the data usage pattern is illustrated by the top cube in Figure (b), the data may be actually partitioned as cubes in Figure (a).
+1. In traditional MapReduce, the data partitioning and distribution are not directly controlled by the user. So when the data usage pattern is illustrated by the top cube in Figure 2(b), the data may be actually partitioned as cubes in Figure 2(a).
  
-2. Various usage patterns (partitioning) could be applied to the same chunk of data, depending on the analysis being performed. For instance, change detection tasks require broad spatial regions, and several adjacent spectral layers; signal processing tasks have no spatial region requirement, but a partition needs to contain all the spectral layers for one pixel. Figure (b) gives three possible usage patterns.
+2. Various usage patterns (partitioning) could be applied to the same chunk of data, depending on the analysis being performed. For instance, change detection tasks require broad spatial regions, and several adjacent spectral layers; signal processing tasks have no spatial region requirement, but a partition needs to contain all the spectral layers for one pixel. Figure 2(b) gives three possible usage patterns.
 
-The storage-usage mismatch in Figure (a) and Figure (b) causes extra network traffic and synchronization. Figure (d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure (d). When storage matches the data usage as described in Figure (e), data locality is preserved and the system becomes scalable again.
+The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network traffic and synchronization. Figure 2(d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure 2(d). When storage matches the data usage as described in Figure 2(e), data locality is preserved and the system becomes scalable again.
 
 ##Design##
 
