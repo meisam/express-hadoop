@@ -1,20 +1,15 @@
-EXPRESS-HADOOP
-==============
-
-A Hadoop extension to support high dimensional data analysis
-
-##Introduction##
+#Introduction#
 EXPRESS is proposed to enable efficient processing of high-dimensional scientific data. It takes advantage of prior knowledge in **data structure** and **data usage pattern**. By performing **incongruent data partitioning** and **locality aware task scheduling**, EXPRESS effectively reduces the network traffic and task execution time. Highlighted features involve:
 
 * User interfaces to describe and use data in a **structure-aware** language. 
 * A novel **incongruent data partitioning** scheme for replicas. EXPRESS supports the coexistence of multiple data partitioning for the same data. It also introduces a set of optimizations to fully realize the potential of incongruent partitioning.
 * Data **layout aware** task selection and scheduling. By exposing data layout information, the EXPRESS scheduler collocates the map/reduce tasks with related data. When data layout matches its usage pattern, EXPRESS can select the proper map task to accelerate the data loading.
 
-##Installation##
-###Prerequirement  
+#Installation#
+##Prerequirement  
 hadoop-1.0.1, ant, patch
 
-###Steps
+##Steps
 1. [Apply express patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
 2. Create express-hadoop.jar
 
@@ -25,7 +20,7 @@ hadoop-1.0.1, ant, patch
 
     ``ant -f build.xml compile``
 
-##How To##
+#How To#
 * Use express.hdd.HDFGen to generate test data with specifc partitioning scheme
     
     ``bin/hadoop jar express-hadoop.jar hdf.test.HDFGen [dataSize] [partitionOffset] [recordSize] [partitionSize] [outDir]``
@@ -36,7 +31,7 @@ hadoop-1.0.1, ant, patch
 
 * run tests/validate.sh for validation
 
-##A Motivating Case##
+#A Motivating Case#
 **Hyperspectral data** is usually collected by sensors on an airborne or spaceborne platform. It is a valuable data source for many critical applications, such as mineral exploration, agricultural assessment, and special target recognition. Figure below shows a representative image of a hyperspectral cube. 
 
 <figure>
@@ -61,8 +56,8 @@ To analyze the data for a special purpose like geometric correction or mineral s
 
 The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network traffic and synchronization. Figure 2(d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure 2(d). When storage matches the data usage as described in Figure 2(e), data locality is preserved and the system becomes scalable again.
 
-##Design##
+#Design#
 
-##Authors##
+#Authors#
 * Code: [Siyuan Ma](http://siyuan.biz)
 
