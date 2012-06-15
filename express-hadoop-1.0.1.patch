@@ -1,0 +1,532 @@
+Index: src/mapred/org/apache/hadoop/mapred/JobInProgress.java
+===================================================================
+--- src/mapred/org/apache/hadoop/mapred/JobInProgress.java	(revision 1309575)
++++ src/mapred/org/apache/hadoop/mapred/JobInProgress.java	(working copy)
+@@ -17,9 +17,12 @@
+  */
+ package org.apache.hadoop.mapred;
+ 
++import express.hdd.*;
++
+ import java.io.IOException;
+ import java.security.PrivilegedExceptionAction;
+ import java.util.ArrayList;
++import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.Comparator;
+ import java.util.EnumMap;
+@@ -317,6 +320,353 @@
+ 
+   final private UserGroupInformation userUGI;
+   
++  private HDFInfo hdfinfo = new HDFInfo();
++  public class HDFInfo {
++	  private TreeMap<TaskAttemptID, Integer> HDFMapperAttempt2Chunk;
++	  private TreeMap<String, List<TaskAttemptID>> HDFtts2attemptIDs;
++	  private TreeMap<String, List<Integer>> HDFtts2RIDs;
++	  private TreeMap<String, Integer> RRCount;
++	  private int maxRR = 8;
++	  
++	  private JobConf conf;
++	  private boolean isEnabled = false;
++	  private boolean isReducerLocalityAware = false;
++	  private boolean isMinTraffic = false;
++	  private boolean debugOn = false;
++	  private boolean timingOn = false;
++	  TaskInProgress[] mapArray;
++	  private int MAXMAP;
++	  private HyperRectangleData orig;
++	  private HyperRectangleData access;
++	  Log LOG;
++	  
++	  public boolean isHDF(){
++		  return isEnabled;
++	  }
++	  
++	  public boolean isLocAwareSched() {
++		  return isReducerLocalityAware;
++	  }
++	  
++	  public boolean isMinTraffic() {
++		  return isMinTraffic;
++	  }
++	  
++	  public boolean isNotMinTraffic() {
++		  return (!isMinTraffic);
++	  }
++	  
++	  public boolean debugMode() {
++		  return debugOn;
++	  }
++	  
++	  public boolean timingMode() {
++		  return timingOn;
++	  }
++	  
++	  public HDFInfo() {
++		  HDFMapperAttempt2Chunk = null;
++		  isEnabled = false;
++		  isReducerLocalityAware = false;
++		  isMinTraffic = false;
++	  }
++	  
++	  public HDFInfo(JobConf conf, TaskInProgress[] mapArray, Log LOG) throws Exception {
++		  this.conf = conf;
++		  this.mapArray = mapArray;
++		  this.LOG = LOG;
++		  isEnabled = conf.getBoolean("isHighDimensionData", false);
++		  timingOn = conf.getBoolean("hdf.timing", false);
++		  if (!isEnabled)
++			  return;
++		  HDFMapperAttempt2Chunk = new TreeMap<TaskAttemptID, Integer>();
++		  HDFtts2attemptIDs = new TreeMap<String, List<TaskAttemptID>>();
++		  HDFtts2RIDs = new TreeMap<String, List<Integer>>();
++		  RRCount = new TreeMap<String, Integer>();
++		  
++		  isReducerLocalityAware = conf.getBoolean("hdf.reduce.schedule.localityAware", false);
++		  isMinTraffic = conf.getBoolean("hdf.reduce.schedule.minTraffic", false);
++		  debugOn = conf.getBoolean("hdf.debug", false);
++		  maxRR = conf.getInt("hdf.maxRR", 8);
++		  MAXMAP = conf.getNumMapTasks();
++		  LOG.info("HDFInfo.add:: isEnabled:" + isEnabled + "; maps.length=" + mapArray.length);
++		  
++		  access = new HyperRectangleData(
++					Tools.getHDFVectorFromConf(conf, "DataSize"),
++					Tools.getHDFVectorFromConf(conf, "ChunkOffset"), 
++					Tools.getHDFVectorFromConf(conf, "ChunkLength"),
++					Tools.getHDFVectorFromConf(conf, "DataSize").length);
++		  orig = new HyperRectangleData(
++					Tools.getHDFVectorFromConf(conf, "DataSize"),
++					Tools.getHDFVectorFromConf(conf, "PartitionOffset"), 
++					Tools.vectorDotX(Tools.getHDFVectorFromConf(conf, "PartitionRecordLength"),
++									Tools.getHDFVectorFromConf(conf, "PartitionSize")),
++					Tools.getHDFVectorFromConf(conf, "DataSize").length);
++	  }
++	  
++	  public boolean incrRR(String tracker){
++		   boolean ret = false;
++		   Integer counter = RRCount.get(tracker);
++		   if (counter == null) {
++			   counter = new Integer(0);
++			   RRCount.put(tracker, counter);
++			   ret = true;			   
++		   }
++		   counter++;
++		   return ret;
++	  }
++	  
++	  public int getRR(String tracker) {
++		  Integer ret = RRCount.get(tracker);
++		  if (ret == null)
++			  return 0;
++		  return ret;
++	  }
++	  
++	  public boolean resetRR(String tracker) {
++		  boolean ret = false;
++		  Integer counter = RRCount.get(tracker);
++		  if (counter == null) {
++			  counter = new Integer(0);
++			  RRCount.put(tracker, counter);
++			  ret = true;			   
++		  }
++		  counter = 0;
++		  return ret;
++	  }
++	  
++	  public boolean isHarmfulRR(String tracker) {
++		  boolean ret = false;
++		  Integer counter = RRCount.get(tracker);
++		  if (counter == null) {
++			  counter = new Integer(0);
++			  RRCount.put(tracker, counter);
++			  ret = true;
++			  counter = 0;
++		  }
++		  return counter > maxRR;
++	  }
++	  
++	  private Integer status2chunkid(String status){
++		  String[] firstSplit = status.split("/");
++		  if (firstSplit.length < 7)
++			  return null;
++		  String secondSplit = firstSplit[6].split(":")[0];
++		  return Integer.parseInt(secondSplit);
++	  }
++	  
++	  private Integer mapperid2chunkid(int mapperid){
++		  if (debugMode())
++		  	LOG.info("HDFInfo.mapperid2chunkid:: maps.length=" + maps.length +
++				  ", mapArray.length=" + mapArray.length);
++		  TaskReport report = maps[mapperid].generateSingleReport();
++		  if (report == null) 
++			  return null;
++		  String mstatus = report.getState();
++		  //LOG.info("HDFInfo.mapperid2chunkid:: status:" + mstatus);
++		  return status2chunkid(mstatus);
++	  }
++	  
++	  private int TaskAttemptID2MapID(TaskAttemptID tid){
++		  return Integer.parseInt(tid.toString().split("_")[4]);
++	  }
++	  
++	  //return true if update is performed
++	  public boolean update(TaskAttemptID tid) {
++		  if(!tid.isMap())
++			  return false;
++		  int mapid = TaskAttemptID2MapID(tid);
++		  if(mapid >=MAXMAP)
++			  return false;
++		  if(debugMode())
++			  LOG.info("HDFInfo.update:: mapid=" + mapid + "; tid=" + tid.toString());
++		  Integer cid = mapperid2chunkid(mapid);
++		  if (cid != null) {
++			  HDFMapperAttempt2Chunk.put(tid, cid);
++			  return true;
++		  }
++		  return false;
++	  }
++	  
++	  public Integer getChunkID(TaskAttemptID tid) {
++		  Integer cid = HDFMapperAttempt2Chunk.get(tid);
++		  if (cid == null)
++			  update(tid);
++		  return HDFMapperAttempt2Chunk.get(tid);
++	  }
++	  
++	  private boolean addSchedReducer(TaskTrackerStatus tts, int rid) {
++		  String ttsName = tts.getTrackerName();
++		  List<Integer> ridList = HDFtts2RIDs.get(ttsName);
++		  if (ridList == null) {
++			  ridList = new ArrayList<Integer>();
++			  HDFtts2RIDs.put(ttsName, ridList);
++		  }
++		  ridList.add(rid);
++		  return true;
++	  }
++	  
++	  private String getSchedReducer (TaskTrackerStatus tts) {
++		  return Tools.list2String(HDFtts2RIDs.get(tts.getTrackerName()));
++	  }
++	  
++	  public Integer[] getChunkIDs(TaskTrackerStatus tts) {
++		  List<TaskAttemptID> tids = HDFtts2attemptIDs.get(tts.getTrackerName());
++		  if (tids.size() == 0)
++			  return null;
++		  if(debugMode())
++			  LOG.info("HDFInfo.getChunkIDs:: tids.size=" + tids.size() + " TaskTracker=" + tts.getTrackerName());
++		  Integer[] cids = new Integer[tids.size()];
++		  int nullcount = 0;
++		  for (int i=0; i<cids.length; i++) {
++			  cids[i] = getChunkID(tids.get(i));
++			  if (cids[i] == null)
++				  nullcount++;
++		  }
++		  //remove null entries
++		  if (nullcount > 0) {
++			  Integer[] tmp = new Integer[tids.size() - nullcount];
++			  int i=0, j=0;
++			  while (i < tmp.length) {
++				if (cids[j] != null){
++					tmp[i] = cids[j];
++					i++;
++				}
++				j++;
++			  }
++			  cids = tmp;
++		  }
++		  return cids;
++	  }
++	  
++	  public void addTask(Task task, TaskTrackerStatus tts){
++		TaskAttemptID tid = task.getTaskID();
++		if(TaskAttemptID2MapID(tid) >= MAXMAP)
++			return;
++		List<TaskAttemptID> tids = HDFtts2attemptIDs.get(tts.getTrackerName());
++		boolean isNew = false;
++		if (tids == null){
++			tids = new ArrayList<TaskAttemptID>();
++			isNew = true;
++		}
++		tids.add(tid);
++		if (isNew) {
++			HDFtts2attemptIDs.put(tts.getTrackerName(), tids);
++		}
++		update(tid);
++	  }
++	  
++	  public String toString(){
++		  return "HDFInfo.toString:: " + HDFMapperAttempt2Chunk.toString() + "|;.;|" + HDFtts2attemptIDs.toString();
++	  }
++	  
++	  public int[] tips2taskids(Collection<TaskInProgress> tips){
++		  Iterator<TaskInProgress> iter = tips.iterator();
++		  int[] tids = new int[tips.size()];
++		  
++		  int i = 0;
++		  while (iter.hasNext()) {
++			  TaskInProgress tip = iter.next();
++			  tids[i] = tip.idWithinJob();
++			  i++;
++		  }
++		  
++		  return tids;
++	  }
++	  
++	  public synchronized TaskInProgress findReduceTaskFromListInAwareOfLocality(
++			  Collection<TaskInProgress> tips, TaskTrackerStatus ttStatus,
++		      int numUniqueHosts, boolean removeFailedTip) {
++		  long	startTime = 0;
++		  if (timingMode()) {
++			  startTime = System.currentTimeMillis();
++		  }
++		  
++		  //get all the qualified reducers on this TaskTracker
++		  long	timer_0 = 0;
++		  if (timingMode()) {
++			  timer_0 = System.currentTimeMillis();
++		  }
++		  Integer[] partitionIDs = getChunkIDs(ttStatus);
++		  String ttsName = ttStatus.getTrackerName();
++		  int[] qRs = null;
++		  for (int i=0; i<partitionIDs.length; i++){
++			  int[] poffset = orig.getChunkOffsetByNumber(partitionIDs[i]);
++			  int[] overlappedReducers = access.getOverlappedChunks(poffset, orig.getChunkLength());
++			  qRs = Tools.mergeSortedArray(qRs, overlappedReducers);
++		  }
++		  
++		  if (timingMode()) {
++			  long duration = System.currentTimeMillis() - timer_0;
++			  LOG.info("HDFInfo::ObtainLocalityInfo%Timing: " + duration);
++		  }
++		  
++		  if(debugMode()) {
++			LOG.info("HDFInfo::" + ttsName + "->partitions: " + Arrays.toString(partitionIDs));
++		  	LOG.info("HDFInfo::" + ttsName + "->qualified reducers: " + Arrays.toString(qRs));
++		  	LOG.info("HDFInfo::" + ttsName + "->scheduled reducers: " + getSchedReducer(ttStatus));
++		  	LOG.info("HDFInfo::" + ttsName + "->available reducers: " + Arrays.toString(tips2taskids(tips)));
++		  }
++		  
++		  TaskInProgress ret = null;
++		  Iterator<TaskInProgress> iter = tips.iterator();
++		  int rid = -1;
++		  boolean noret = true;
++		  while (iter.hasNext()) {
++			  TaskInProgress tip = iter.next();
++
++		      // Select a tip if
++		      //   1. runnable   : still needs to be run and is not completed
++		      //   2. ~running   : no other node is running it
++		      //   3. earlier attempt failed : has not failed on this host
++		      //                               and has failed on all the other hosts
++		      // A TIP is removed from the list if 
++		      // (1) this tip is scheduled
++		      // (2) if the passed list is a level 0 (host) cache
++		      // (3) when the TIP is non-schedulable (running, killed, complete)
++		      if (tip.isRunnable() && !tip.isRunning()) {
++		    	  // check if the tip has failed on this host
++		    	  if (!tip.hasFailedOnMachine(ttStatus.getHost()) || 
++		    			  tip.getNumberOfFailedMachines() >= numUniqueHosts) {
++		    		  // check if the tip has failed on all the nodes
++		    		  rid = tip.idWithinJob();
++		    		  if (Tools.isWithinSortedArray(rid, qRs) || isHarmfulRR(ttsName)){
++		    			  if(debugMode())
++		    				  LOG.info("HDFInfo::hasReturn" + ttsName + "->rid: " + rid + "->RR: " + getRR(ttsName));
++		    			  addSchedReducer(ttStatus, rid);
++		    			  iter.remove();
++		    			  ret = tip;
++		    			  noret = false;
++		    			  break;
++		    		  }
++		    	  } else if (removeFailedTip) { 
++		    		  // the case where we want to remove a failed tip from the host cache
++		    		  // point#3 in the TIP removal logic above
++		    		  iter.remove();
++		    	  }
++		      } else {
++		    	  // see point#3 in the comment above for TIP removal logic
++		    	  iter.remove();
++		      }
++		  }
++		  
++		  if (timingMode()) {
++			  long duration = System.currentTimeMillis() - startTime;
++			  LOG.info("HDFInfo::findReduceTaskFromListInAwareOfLocality%Timing: " + duration);
++		  }
++		  
++		  if (noret)
++			  incrRR(ttsName);
++		  else
++			  resetRR(ttsName);
++		  
++		  if(debugMode())
++				LOG.info("HDFInfo::" + ttsName + "->rid: " + rid + "->RR: " + getRR(ttsName));
++			  
++		  return ret;
++	  }
++  }
++  
+   /**
+    * Create an almost empty JobInProgress, which can be used only for tests
+    */
+@@ -489,6 +839,14 @@
+       //hence the "current user" is actually referring to the kerberos
+       //authenticated user (if security is ON).
+       FileSystem.closeAllForUGI(UserGroupInformation.getCurrentUser());
++      
++      //HDF initialization
++      try {
++		this.hdfinfo = new HDFInfo(conf, maps, LOG);
++	} catch (Exception e) {
++		// TODO Auto-generated catch block
++		e.printStackTrace();
++	}
+     }
+   }
+ 
+@@ -544,6 +902,15 @@
+         nonLocalMaps.add(maps[i]);
+         continue;
+       }
++      
++      /*if (getJobConf().getBoolean("isHighDimensionData", false)){
++      	String debug = new String("HDF.createCache@ split[" + i +"]: " + 
++      			"offset=" + splits[i].getStartOffset() +
++      			", location=" + splits[i].getSplitLocation()+ 
++      			", index=" + splits[i].getSplitIndex() +
++      			", #locs[0]=" + splits[i].getLocations()[0]);
++      	LOG.info(debug);
++      } */
+ 
+       for(String host: splitLocations) {
+         Node node = jobtracker.resolveAndAddToTopology(host);
+@@ -1325,6 +1692,15 @@
+       addRunningTaskToTIP(maps[target], result.getTaskID(), tts, true);
+       resetSchedulingOpportunities();
+     }
++    
++    if (getJobConf().getBoolean("isHighDimensionData", false)){
++      	String debug = new String("obtainNewMapTask@ map[" + target +"]: " + 
++      			"file=" + result.getJobFile() +
++      			", partition=" + result.getPartition()+ 
++      			", isMap=" + result.isMapTask() +
++      			"; TT=" + tts.getHost());
++      	LOG.info(debug);
++    } 
+ 
+     return result;
+   }    
+@@ -1389,6 +1765,10 @@
+       addRunningTaskToTIP(maps[target], result.getTaskID(), tts, true);
+       resetSchedulingOpportunities();
+     }
++    
++    if (hdfinfo.isHDF()){
++    	hdfinfo.addTask(result, tts);
++      } 
+ 
+     return result;
+   }
+@@ -1414,6 +1794,16 @@
+       addRunningTaskToTIP(maps[target], result.getTaskID(), tts, true);
+       resetSchedulingOpportunities();
+     }
++    
++    if (getJobConf().getBoolean("isHighDimensionData", false)){
++      	String debug = new String("obtainNewNodeOrRackLocalMapTask@ map[" + target +"]: " + 
++      			"file=" + result.getJobFile() +
++      			", partition=" + result.getPartition()+ 
++      			", isMap=" + result.isMapTask() +
++      			", TIPId=" + maps[target].getTIPId().toString() +
++      			"; TT=" + tts.getHost());
++      	LOG.info(debug);
++    }
+ 
+     return result;
+   }
+@@ -1441,6 +1831,15 @@
+       // DO NOT reset for off-switch!
+     }
+ 
++    if (getJobConf().getBoolean("isHighDimensionData", false)){
++      	String debug = new String("obtainNewNonLocalMapTask@ map[" + target +"]: " + 
++      			"file=" + result.getJobFile() +
++      			", partition=" + result.getPartition()+ 
++      			", isMap=" + result.isMapTask() +
++      			"; TT=" + tts.getHost());
++      	LOG.info(debug);
++    }
++    
+     return result;
+   }
+   
+@@ -1672,9 +2071,19 @@
+     if (!scheduleReduces()) {
+       return null;
+     }
+-
++    
++    long startTime = 0;
++    if (hdfinfo.timingMode()) {
++    	startTime = System.currentTimeMillis();
++    }
+     int  target = findNewReduceTask(tts, clusterSize, numUniqueHosts, 
+                                     status.reduceProgress());
++    
++    if (hdfinfo.timingMode()) {
++    	long duration = System.currentTimeMillis() - startTime;
++    	LOG.info("HDFInfo::findNewReduceTask%Timing: " + duration);
++    }
++    
+     if (target == -1) {
+       return null;
+     }
+@@ -2459,6 +2868,14 @@
+       }
+       return -1;
+     }
++    
++    if (hdfinfo.isHDF()){
++    	List<TaskStatus> tss = tts.getTaskReports();    	
++    	hdfinfo.getChunkIDs(tts);
++    	//LOG.info(hdfinfo.toString());
++    	//int rnum = 1;
++    	//return rnum;
++    } 
+ 
+     String taskTracker = tts.getTrackerName();
+     TaskInProgress tip = null;
+@@ -2472,7 +2889,14 @@
+ 
+     // 1. check for a never-executed reduce tip
+     // reducers don't have a cache and so pass -1 to explicitly call that out
+-    tip = findTaskFromList(nonRunningReduces, tts, numUniqueHosts, false);
++    if (hdfinfo.isHDF() && hdfinfo.isLocAwareSched())
++    	tip = hdfinfo.findReduceTaskFromListInAwareOfLocality(nonRunningReduces, tts, numUniqueHosts, false);
++    if ((tip == null && hdfinfo.isNotMinTraffic()) || (!hdfinfo.isHDF()) || 
++    		(hdfinfo.isHDF() && hdfinfo.isHarmfulRR(taskTracker))) {
++    	if (hdfinfo.isHDF() && hdfinfo.isHarmfulRR(taskTracker))
++    		hdfinfo.resetRR(taskTracker);
++    	tip = findTaskFromList(nonRunningReduces, tts, numUniqueHosts, false);
++    }
+     if (tip != null) {
+       scheduleReduce(tip);
+       return tip.getIdWithinJob();
+@@ -2535,7 +2959,7 @@
+     TaskAttemptID taskid = status.getTaskID();
+     int oldNumAttempts = tip.getActiveTasks().size();
+     final JobTrackerInstrumentation metrics = jobtracker.getInstrumentation();
+-        
++    
+     // Metering
+     meterTaskAttempt(tip, status);
+     
+@@ -2562,6 +2986,8 @@
+     // Mark the TIP as complete
+     tip.completed(taskid);
+     resourceEstimator.updateWithCompletedTask(status, tip);
++    if (hdfinfo.isHDF())
++    	hdfinfo.update(status.getTaskID());
+ 
+     // Update jobhistory 
+     TaskTrackerStatus ttStatus = 

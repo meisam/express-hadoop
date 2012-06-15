@@ -1,0 +1,13 @@
+#!/bin/bash
+#Horizontal partitioning Versus Vertical partitioning
+
+TESTDIR=$(dirname $0);
+
+#$TESTDIR/ex_HV.sh 16384,512,2048 8,512,1024 32,1,1 "16384,512,16 256,512,1024" "2" HV_1G_N16_C_ 'true' '.16'
+echo "64MB";
+
+TAG=WC_N1;
+$TESTDIR/ex_HV.sh 8192,512,8192 8,512,1024 16,1,1 "8192,512,16" "1" $TAG 'true' '.1';
+#$TESTDIR/ex_HV.sh 8192,512,8192 8,512,1024 16,1,1 "128,512,1024" "1" $TAG;
+#$TESTDIR/ex_HV.sh 8192,512,8192 8,512,1024 16,1,1 "8192,512,16" "2" HV_1G_N16_C_T1_;
+#$TESTDIR/ex_HV.sh 8192,512,8192 8,512,1024 16,1,1 "128,512,1024" "2" HV_1G_N16_C_T1_;

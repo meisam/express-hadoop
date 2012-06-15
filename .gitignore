@@ -1,0 +1,6 @@
+express-hadoop.jar
+*.class
+*.swp
+.classpath
+.project
+.settings
