@@ -15,15 +15,26 @@ EXPRESS is proposed to enable efficient processing of high-dimensional scientifi
 hadoop-1.0.1, ant, patch
 
 ###Steps
-1. [Apply patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
+1. [Apply express patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
 2. Create express-hadoop.jar
 
-  jar cf express-hadoop.jar src/express
-3.  Add express-hadoop.jar to CLASSPATH
+    ``jar cf express-hadoop.jar src/express``
+  
+3. Add express-hadoop.jar to CLASSPATH
 3. Recompile hadoop-1.0.1
-ant -f build.xml compile
+
+    ``ant -f build.xml compile``
 
 ##How To##
+* Use express.hdd.HDFGen to generate test data with specifc partitioning scheme
+    
+    ``bin/hadoop jar express-hadoop.jar hdf.test.HDFGen [dataSize] [partitionOffset] [recordSize] [partitionSize] [outDir]``
+
+* Use express.hdd.HDFMicroBenchmark to load data with specific pattern
+
+    ``bin/hadoop jar express-hadoop.jar hdf.test.HDFMicroBenchmark [dataSize] [chunkOffset] [chunkSize] [inDir] [outDir]``
+
+* run tests/validate.sh for validation
 
 ##A Motivating Case##
 **Hyperspectral data** is usually collected by sensors on an airborne or spaceborne platform. It is a valuable data source for many critical applications, such as mineral exploration, agricultural assessment, and special target recognition. Figure below shows a representative image of a hyperspectral cube. 
@@ -50,77 +61,5 @@ To analyze the data for a special purpose like geometric correction or mineral s
 
 The storage-usage mismatch in Figure (a) and Figure (b) causes extra network traffic and synchronization. Figure (d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure (d). When storage matches the data usage as described in Figure (e), data locality is preserved and the system becomes scalable again.
 
+##Design##
 
-
-
-
-##The number of hashes determine the heading level## 
-
-You can use “forbidden” HTML characters
-like &, >, <, " and ', they are escaped
-automatically. If you need additional HTML
-formatting you can <span class="mySpan">just embed</span>
-it into the Markdown source. You can include links
-[easily](http://example.com "with a title") or 
-[without a title](http://foo.example.com). If you use links often, 
-[define them once][someid] and reference them by any id.
-Just add the link definition anywhere, it will be removed 
-from the output: 
-
-[someid]: http://example.com "You can add a title"
-
-You can add a horizontal ruler easily:
-
-*******************************************
-
-##Trailing hashes in a heading are optional
-
-<div class="special"> If necessary you can even include
-whole HTML blocks. Note however that Markdown code is *not*
-evaluated inside HTML blocks, so if you want emphasis, you 
-have to <em>add it yourself</em>    
-</div>
-
-You can embed verbatim code examples by indenting them by 
-four spaces or a tab: 
-
-    //This is verbatim code. Markdown syntax is *not*
-    //processed here. However, HTML special chars are
-    //escaped: < & > " '
-    def foo() = <span>Hello World</span>
-
-If you want verbatim code inline in your text
-you can surround it with `def backticks():String`
-or ``def doubleBackticks() = "To add ` to your code"``
-
-* Unordered
-* List items
-* are started
-* by asterisks
-
-> To quote something, add ">" in front of 
-> the quoted text        
-
-1. Numbered Lists 
-2. start with a number and a "."
-234. the numbering is 
-1. ignored in the output
-250880. however and replaced
-9. by consecutive numbers.
-
-> To round things off
-> 
-> * you can 
-> * nest lists
-> 
-> #headings#
-> > and quotes
-> > 
-> >     //and code
-> > 
-> > ##as much as you want##
-> > 
-> > 1. also 
-> >     * a list
-> >     * in a list
-> > 2. isn't that cool?
