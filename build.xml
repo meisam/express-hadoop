@@ -1,0 +1,31 @@
+<project name="express-hadoop" basedir="." default="main">
+	<property name="src.dir"     value="src"/>
+	<property name="build.dir"   value="bin"/>
+	<property name="classes.dir" value="${build.dir}"/>
+	<property name="jar.dir"     value="./"/>
+	<property environment="env"/>
+
+	<path id="classpath">
+        <fileset dir="${env.HADOOP_HOME}" includes="**/*.jar"/>
+    </path>
+	
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+	
+	<target name="compile">
+		<mkdir dir="${classes.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${classes.dir}" classpathref="classpath" includeantruntime="false">
+			<compilerarg value="-Xlint"/>
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile">
+		<mkdir dir="${jar.dir}"/>
+		<jar destfile="${jar.dir}/${ant.project.name}.jar" basedir="${classes.dir}"></jar>
+	</target>
+	
+	<target name="clean-build" depends="clean,jar"/>
+
+</project>
+
