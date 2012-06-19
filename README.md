@@ -7,13 +7,15 @@ EXPRESS is proposed to enable efficient processing of high-dimensional scientifi
 
 #Installation#
 ##Prerequirement  
-hadoop-1.0.1, ant, patch
+**Packages** hadoop-1.0.1, ant, patch
+
+**Environmental Variables** HADOOP_HOME
 
 ##Steps
 1. [Apply express patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
 2. Create express-hadoop.jar
 
-    ``jar cf express-hadoop.jar src/express``
+    ``ant -f build.xml jar``
   
 3. Add express-hadoop.jar to CLASSPATH
 3. Recompile hadoop-1.0.1
