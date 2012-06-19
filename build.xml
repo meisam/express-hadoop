@@ -27,5 +27,11 @@
 	
 	<target name="clean-build" depends="clean,jar"/>
 
+	<target name="windows">
+		<exec executable="D:/cygwin/bin/bash" newenvironment="false" dir=".">
+			<arg value="tools/windows.sh"/>
+		</exec>
+	</target>
+
 </project>
 
