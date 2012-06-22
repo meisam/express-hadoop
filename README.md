@@ -63,5 +63,5 @@ The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network t
 #People#
 * Developer: [Siyuan Ma](http://siyuan.biz)
 * Faculty: [Xian-He Sun](http://www.cs.iit.edu/~scs/sun/), 
-           [Rob Ross](http://www.mcs.anl.gov/~rross/)
+           [Robert Ross](http://www.mcs.anl.gov/~rross/)
 
