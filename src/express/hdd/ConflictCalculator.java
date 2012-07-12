@@ -21,6 +21,7 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapred.SequenceFileAsTextInputFormat;
 import org.apache.hadoop.mapred.TaskAttemptID;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
@@ -43,10 +44,10 @@ public class ConflictCalculator extends Configured implements Tool {
 		String nodeIP;
 		public void configure(JobConf conf) {
 		     try {		 
-		    	 System.out.printf("start mapper-configure");
+		    	 System.out.printf("start mapper-configure\n");
 		    	 InetAddress addr = InetAddress.getLocalHost();
 		    	 nodeIP = addr.getHostAddress();
-		    	 System.out.printf("Got nodeIP = %s", nodeIP);
+		    	 System.out.printf("Got nodeIP = %s\n", nodeIP);
 		     } catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -57,7 +58,7 @@ public class ConflictCalculator extends Configured implements Tool {
               OutputCollector<Text, Text> fout,
               Reporter reporter) throws IOException {
 	    	
-	    	System.out.printf("start mapper");
+	    	System.out.printf("start mapper\n");
 	    	fout.collect(new Text(nodeIP), key);	
 	    }
 	  }
@@ -69,7 +70,7 @@ public class ConflictCalculator extends Configured implements Tool {
 		
 		public void configure(JobConf job) {
 		     try {
-		    	 System.out.printf("start reducer-configure");
+		    	 System.out.printf("start reducer-configure\n");
 		    	 OutputDirectory=  new Path(job.get("OutputDirectory").toString());
 		    	 this.job=job;
 		    	 fs = FileSystem.get(job);
@@ -83,7 +84,7 @@ public class ConflictCalculator extends Configured implements Tool {
 				OutputCollector<Text, Text> fout, Reporter arg3)
 				throws IOException {
 			
-			System.out.printf("start reducer");
+			System.out.printf("start reducer\n");
 			
 			Path nodeSummary = new Path(OutputDirectory, nodeID.toString());
 			final SequenceFile.Writer writer = SequenceFile.createWriter(
@@ -112,6 +113,7 @@ public class ConflictCalculator extends Configured implements Tool {
 	    final Path outDir = new Path(args[1]);
 	    FileInputFormat.setInputPaths(job, inDir);
 	    FileOutputFormat.setOutputPath(job, outDir);
+	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 		
 		JobClient.runJob(job);
 		return 0;
