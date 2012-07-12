@@ -19,8 +19,6 @@ testGen() {
 	echo "stop all";
 	$BIN/stop-all.sh;
 	
-	echo "@Test conducts on 8 nodes";
-	cp $CONF.8 $CONF;
 	python $TOOLDIR/orc-xonf.py -f "$CONF_DIR/mapred-site.xml" -k 'mapred.tasktracker.map.tasks.maximum' -v 1;
 	$BIN/start-all.sh;
 	
