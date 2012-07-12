@@ -9,7 +9,6 @@ import java.util.Iterator;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile.CompressionType;
@@ -108,6 +107,7 @@ public class ConflictCalculator extends Configured implements Tool {
 	    job.setReducerClass(CCReducer.class);
 	    job.setOutputKeyClass(Text.class);
 	    job.setOutputValueClass(Text.class);
+	    job.setMapOutputKeyClass(Text.class);
 	    final Path inDir = new Path(args[0]);
 	    final Path outDir = new Path(args[1]);
 	    FileInputFormat.setInputPaths(job, inDir);
