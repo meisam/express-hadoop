@@ -35,9 +35,9 @@ import org.apache.hadoop.util.ToolRunner;
  *
  * <p>
  * To run the program: 
- * <b>bin/hadoop jar express-hadoop.jar hdf.test.HDFGen [dataSize] [partitionOffset] [recordSize] [partitionSize] [outDir]</b>
+ * <b>bin/hadoop jar express-hadoop.jar express.hdd.HDFGen [dataSize] [partitionOffset] [recordSize] [partitionSize] [outDir]</b>
  * e.g.
- * <b>bin/hadoop jar express-hadoop.jar hdf.test.HDFGen 32,64,128 0,0,0 4,8,8 4,4,4 hdf-test</b>
+ * <b>bin/hadoop jar express-hadoop.jar express.hdd.HDFGen 32,64,128 0,0,0 4,8,8 4,4,4 hdf-test</b>
  */
 
 public class HDFGen extends Configured implements Tool{

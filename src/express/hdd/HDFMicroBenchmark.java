@@ -35,9 +35,9 @@ import org.apache.hadoop.util.ToolRunner;
  *
  * <p>
  * To run the program: 
- * <b>bin/hadoop jar express-hadoop.jar hdf.test.HDFMicroBenchmark [dataSize] [chunkOffset] [chunkSize] [inDir] [outDir]</b>
+ * <b>bin/hadoop jar express-hadoop.jar express.hdd.HDFMicroBenchmark [dataSize] [chunkOffset] [chunkSize] [inDir] [outDir] [enableHDF] [enableByPass] [singleReducer]</b>
  * e.g.
- * <b>bin/hadoop jar express-hadoop.jar hdf.test.HDFMicroBenchmark 32,64,128 0,0,0 32,64,16 hdf-test hdf-test-out</b>
+ * <b>bin/hadoop jar express-hadoop.jar express.hdd.HDFMicroBenchmark 32,64,128 0,0,0 32,64,16 hdf-test hdf-test-out 'true'</b>
  */
 
 public class HDFMicroBenchmark extends Configured implements Tool{
