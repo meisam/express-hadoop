@@ -44,8 +44,10 @@ public class ConflictCalculator extends Configured implements Tool {
 		String nodeIP;
 		public void configure(JobConf conf) {
 		     try {		 
+		    	 System.out.printf("start mapper-configure");
 		    	 InetAddress addr = InetAddress.getLocalHost();
 		    	 nodeIP = addr.getHostAddress();
+		    	 System.out.printf("Got nodeIP = %s", nodeIP);
 		     } catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -56,6 +58,7 @@ public class ConflictCalculator extends Configured implements Tool {
               OutputCollector<Text, Text> fout,
               Reporter reporter) throws IOException {
 	    	
+	    	System.out.printf("start mapper");
 	    	fout.collect(new Text(nodeIP), key);	
 	    }
 	  }
@@ -67,6 +70,7 @@ public class ConflictCalculator extends Configured implements Tool {
 		
 		public void configure(JobConf job) {
 		     try {
+		    	 System.out.printf("start reducer-configure");
 		    	 OutputDirectory=  new Path(job.get("OutputDirectory").toString());
 		    	 this.job=job;
 		    	 fs = FileSystem.get(job);
@@ -79,6 +83,8 @@ public class ConflictCalculator extends Configured implements Tool {
 		public void reduce(Text nodeID, Iterator<Text> keys,
 				OutputCollector<Text, Text> fout, Reporter arg3)
 				throws IOException {
+			
+			System.out.printf("start reducer");
 			
 			Path nodeSummary = new Path(OutputDirectory, nodeID.toString());
 			final SequenceFile.Writer writer = SequenceFile.createWriter(
