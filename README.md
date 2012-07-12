@@ -7,13 +7,15 @@ EXPRESS is proposed to enable efficient processing of high-dimensional scientifi
 
 #Installation#
 ##Prerequirement  
-hadoop-1.0.1, ant, patch
+**Packages** hadoop-1.0.1, ant, patch
+
+**Environmental Variables** HADOOP_HOME
 
 ##Steps
 1. [Apply express patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
 2. Create express-hadoop.jar
 
-    ``jar cf express-hadoop.jar src/express``
+    ``ant -f build.xml jar``
   
 3. Add express-hadoop.jar to CLASSPATH
 3. Recompile hadoop-1.0.1
@@ -58,6 +60,8 @@ The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network t
 
 #Design#
 
-#Authors#
-* Code: [Siyuan Ma](http://siyuan.biz)
+#People#
+* Developer: [Siyuan Ma](http://siyuan.biz)
+* Faculty: [Xian-He Sun](http://www.cs.iit.edu/~scs/sun/), 
+           [Robert Ross](http://www.mcs.anl.gov/~rross/)
 
