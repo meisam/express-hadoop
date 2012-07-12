@@ -5,7 +5,7 @@ flush() {
 	echo "clear cache on nodes {${_NODES}}"
 	for node in $_NODES; do 
 		ssh $node cat /etc/hostname; 
-		ssh $node $HOME/exec/sbin/cache-cleanup.sh -f; 
+		ssh $node $TOOLDIR/cache-cleanup.sh -f; 
 	done
 }
 
