@@ -15,5 +15,7 @@ outDir=$5;
 echo "@Test conducts on 8 nodes";
 format $CONF.8;
 
+# The first testGen is ineffective, but is must to have
+$TESTDIR/genBase.sh testGen;
 $TESTDIR/genBase.sh testGen;
 $TESTDIR/ccBase.sh testCC;

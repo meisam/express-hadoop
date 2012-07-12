@@ -48,7 +48,7 @@ reset4test() {
 	$EXEC dfsadmin -safemode wait;
 }
 
-#hdfgen;
+hdfgen;
 reset4test;
 
 $EXEC fs -rmr mismatch.r1;

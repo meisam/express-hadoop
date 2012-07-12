@@ -24,7 +24,6 @@ testGen() {
 	
 	echo "wait safe mode";
 	$EXEC dfsadmin -safemode wait;
-	sleep 8;
 	
 	echo "@clear existing data"
 	$EXEC fs -rmr hdf-test;

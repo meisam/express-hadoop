@@ -21,3 +21,15 @@ format() {
 	$BIN/stop-all.sh;
 	$BIN/start-all.sh;
 }
+
+reset() {
+	local MM=$1;
+	local MR=$2;
+	echo "reset: $@";
+	$BIN/stop-all.sh;
+	python $TOOLDIR/orc-xonf.py -f "$CONF_DIR/mapred-site.xml" -k 'mapred.tasktracker.map.tasks.maximum' -v $MM;
+	python $TOOLDIR/orc-xonf.py -f "$CONF_DIR/mapred-site.xml" -k 'mapred.tasktracker.map.tasks.maximum' -v $MR;
+	$BIN/start-all.sh;
+	echo "wait safe mode";
+	$EXEC dfsadmin -safemode wait;
+}
