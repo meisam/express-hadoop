@@ -20,12 +20,18 @@ testCC() {
 
 report() {
 	echo "report $@";
-	local INDIR=$1;
-	local RECORDS=$($EXEC fs -ls $INDIR| awk '{print $8}');
+	local DFSDIR=$1;
+	local RECORDS=$($EXEC fs -ls $DFSDIR| awk '{print $8}');
 	for RECORD in $RECORDS; do
 		local ID=$(basename $RECORD);
-		
-		
+		local TMP=$(mktemp);
+		$EXEC fs -text $RECORD > $TMP;
+		local LEVELS=$(cat $TMP|awk -F'\t' '{print $3}'|uniq);
+		for LEVEL in $LEVELS; do
+			local SUM=$(cat $TMP| awk -F'\t' -v L=$LEVEL '{if ($3 == l) print $0}'| awk -F']|\t|;|,|\\[' '{print $7*$8*$9}');
+			echo "${RECORD}\t${LEVEL}\t${SUM}"
+		done
+		rm $TMP;
 	done
 }
 
