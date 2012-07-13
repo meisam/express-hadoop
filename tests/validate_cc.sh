@@ -3,13 +3,12 @@
 
 TESTDIR=`dirname $0`;
 source $TESTDIR/env.sh;
-source $TESTDIR/util.sh;
 
 #####################
-
-echo "@Test conducts on 8 nodes";
-format $CONF.8;
-
+format(){
+	echo "......Format for test under configuration $CONF.8";
+	$TESTDIR/util.sh format $CONF.8;
+}
 
 oneRec(){
 	# The first testGen is ineffective, but is must to have
@@ -31,8 +30,8 @@ twoRec(){
 
 threeRec(){
 	# The first testGen is ineffective, but is must to have
-	#$TESTDIR/genBase.sh testGen;
-	#$EXEC fs -rmr hdf-test;
+	$TESTDIR/genBase.sh testGen;
+	$EXEC fs -rmr hdf-test;
 	echo "threeRec $@";
 
 	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 64,512,2048 1,1,1 hdf-test/rec01;

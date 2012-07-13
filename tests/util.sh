@@ -33,3 +33,5 @@ reset() {
 	echo "wait safe mode";
 	$EXEC dfsadmin -safemode wait;
 }
+
+eval "$@";
