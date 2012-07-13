@@ -182,6 +182,12 @@ public class Tools {
 		return pair;
 	}	
 	
+	public static Text pair2Text(Pair<int[], int[]> a) throws Exception{
+		Text pair = new Text();
+		pair.set((Arrays.toString(a.getLeft())+ ";" + Arrays.toString(a.getRight())+ "\t").getBytes());  
+		return pair;
+	}	
+	
 	public static String list2String(List<Integer> list) {
 		if (list == null)
 			return "";

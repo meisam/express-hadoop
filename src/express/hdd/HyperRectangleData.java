@@ -182,6 +182,16 @@ public class HyperRectangleData implements Iterable<int[]>, Iterator<int[]> {
 		return c;
 	}
 	
+	public static Pair<int[], int[]> getHyperRectangleIntersection(Pair<int[], int[]> a, Pair<int[], int[]> b, final int dim){
+		return getHyperRectangleIntersection(a.getLeft(), a.getRight(), b.getLeft(), b.getRight(), dim);
+	}
+	
+	public static Pair<int[], int[]> getHyperRectangleIntersection(Pair<int[], int[]> a, Pair<int[], int[]> b){
+		if (a.getLeft().length != b.getLeft().length)
+			return null;
+		return getHyperRectangleIntersection(a.getLeft(), a.getRight(), b.getLeft(), b.getRight(), a.getLeft().length);
+	}
+	
 	public static boolean getChunkOfHighDimData(byte[] data, int[] dataSize, int dim, byte[] buffer, int[] chunkOffset, int[] chunkLength) {
 		if (dim <= 0 || dataSize.length < dim || chunkLength.length < dim || chunkOffset.length < dim)
 			return false;

@@ -95,11 +95,9 @@ public class ConflictCalculator extends Configured implements Tool {
 		              fs, job, nodeSummary, Text.class, Text.class, CompressionType.NONE);
 			
 			ArrayList<Pair<int[], int[]>> recs = new ArrayList<Pair<int[], int[]>>(); 
-			Text textOne = new Text("1");
 			while (keys.hasNext()){
 				Text key = keys.next();
-				writer.append(key, textOne);
-				
+				writer.append(key, new Text("1")); //intersection(recs), #rec 
 				try {
 					recs.add(Tools.text2Pair(key));
 				} catch (Exception e) {
@@ -108,6 +106,18 @@ public class ConflictCalculator extends Configured implements Tool {
 				}
 			}
 			
+			
+			for (int i=0; i<recs.size(); i++)
+				for (int j=i+1; j<recs.size(); j++){
+					Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(recs.get(i), recs.get(j));
+					if (conflict != null)
+						try {
+							writer.append(Tools.pair2Text(conflict), new Text("2"));
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} 
+				}
 			
 			writer.close();
 		}
@@ -130,7 +140,7 @@ public class ConflictCalculator extends Configured implements Tool {
 	    FileOutputFormat.setOutputPath(job, outDir);
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    
-	    addAllFiles(job, inDir);
+	    addAllFiles(job, inDir); //adding folders will yield FileNotFoundException (looking for ${PATH}/data)
 		
 		JobClient.runJob(job);
 		return 0;
