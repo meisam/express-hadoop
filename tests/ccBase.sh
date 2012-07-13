@@ -18,4 +18,15 @@ testCC() {
 	$EXEC jar $JAR express.hdd.ConflictCalculator hdf-test hdf-cc;
 }
 
+report() {
+	echo "report $@";
+	local INDIR=$1;
+	local RECORDS=$($EXEC fs -ls $INDIR| awk '{print $8}');
+	for RECORD in $RECORDS; do
+		local ID=$(basename $RECORD);
+		
+		
+	done
+}
+
 eval "$@"; 
