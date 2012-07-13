@@ -26,6 +26,7 @@ import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.SequenceFileAsTextInputFormat;
 import org.apache.hadoop.mapred.TaskAttemptID;
+import org.apache.hadoop.util.StringUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -132,15 +133,17 @@ public class ConflictCalculator extends Configured implements Tool {
 	    FileSystem fs = FileSystem.get(job);
 	    FileStatus[] files = fs.listStatus(inDir);
 	    int j = 0;
+	    ArrayList<String> paths = new ArrayList<String>();  
 	    for (int i=0;i<files.length;i++){
 	    	FileStatus file = files[i];
 	    	if (file.isDir()) {
-	    		FileInputFormat.addInputPath(job, file.getPath());
+	    		paths.add(file.getPath().toString());
 	    	} else
 	    		j++;
 	    }
 	    if (j > 0) //files in the folder inDir
-	    	FileInputFormat.addInputPath(job, inDir);
+	    	paths.add(inDir.toString());
+	    FileInputFormat.addInputPaths(job, StringUtils.join(",", paths));
 		
 		JobClient.runJob(job);
 		return 0;
