@@ -109,17 +109,17 @@ public class ConflictCalculator extends Configured implements Tool {
 			}
 			
 			
-			for (int i=0; i<recs.size(); i++)
-				for (int j=i+1; j<recs.size(); j++){
-					Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(recs.get(i), recs.get(j));
-					if (conflict != null)
-						try {
-							//writer.append(Tools.pair2Text(conflict), new Text("2"));
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} 
-				}
+//			for (int i=0; i<recs.size(); i++)
+//				for (int j=i+1; j<recs.size(); j++){
+//					Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(recs.get(i), recs.get(j));
+//					if (conflict != null)
+//						try {
+//							//writer.append(Tools.pair2Text(conflict), new Text("2"));
+//						} catch (Exception e) {
+//							// TODO Auto-generated catch block
+//							e.printStackTrace();
+//						} 
+//				}
 			
 			ArrayList<ArrayList<Pair<int[], int[]>>> conflictList = new ArrayList<ArrayList<Pair<int[], int[]>>> ();
 			ArrayList<ArrayList<Set<Integer>>> conflictID = new ArrayList<ArrayList<Set<Integer>>> ();
@@ -162,6 +162,40 @@ public class ConflictCalculator extends Configured implements Tool {
 		}
 		conflictList.add(conflictList2);
 		conflictID.add(recIDList2);
+		
+		int act=1;
+		while (conflictList.size() > act){
+			ArrayList<Pair<int[], int[]>> clist = conflictList.get(act);
+			ArrayList<Set<Integer>> rset = conflictID.get(act);
+			
+			ArrayList<Pair<int[], int[]>> newList = new ArrayList<Pair<int[], int[]>>();
+			ArrayList<Set<Integer>> newSet = new ArrayList<Set<Integer>> (); 
+			
+			for (int i=0; i<recs.size(); i++){
+				for (int j=0; j<clist.size(); j++){
+					if (rset.get(j).contains(i))
+						continue;
+					
+					Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(
+							recs.get(i), clist.get(j));
+					if (conflict == null)
+						continue;
+					
+					Set<Integer> idset = new HashSet<Integer>(rset.get(j));
+					idset.add(i);
+					newList.add(conflict);
+					newSet.add(idset);
+				}
+			}
+			if (newList.size() > 0) {
+				conflictList.add(newList);
+				conflictID.add(newSet);
+			}
+			
+			act++;
+		}
+		
+
 	}
 	
 	private static void dumpConflictList(ArrayList<ArrayList<Pair<int[], int[]>>> conflictList, 
