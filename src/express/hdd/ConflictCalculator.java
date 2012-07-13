@@ -98,8 +98,7 @@ public class ConflictCalculator extends Configured implements Tool {
 			
 			ArrayList<Pair<int[], int[]>> recs = new ArrayList<Pair<int[], int[]>>(); 
 			while (keys.hasNext()){
-				Text key = keys.next();
-				//writer.append(key, new Text("1")); //intersection(recs), #rec 
+				Text key = keys.next(); 
 				try {
 					recs.add(Tools.text2Pair(key));
 				} catch (Exception e) {
@@ -107,19 +106,6 @@ public class ConflictCalculator extends Configured implements Tool {
 					e.printStackTrace();
 				}
 			}
-			
-			
-//			for (int i=0; i<recs.size(); i++)
-//				for (int j=i+1; j<recs.size(); j++){
-//					Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(recs.get(i), recs.get(j));
-//					if (conflict != null)
-//						try {
-//							//writer.append(Tools.pair2Text(conflict), new Text("2"));
-//						} catch (Exception e) {
-//							// TODO Auto-generated catch block
-//							e.printStackTrace();
-//						} 
-//				}
 			
 			ArrayList<ArrayList<Pair<int[], int[]>>> conflictList = new ArrayList<ArrayList<Pair<int[], int[]>>> ();
 			ArrayList<ArrayList<Set<Integer>>> conflictID = new ArrayList<ArrayList<Set<Integer>>> ();
