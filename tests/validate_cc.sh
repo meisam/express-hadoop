@@ -34,9 +34,9 @@ threeRec(){
 	$EXEC fs -rmr hdf-test;
 	echo "threeRec $@";
 
-	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 64,512,2048 1,1,1 hdf-test/rec01;
-	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 64,512,1024 1,1,1 hdf-test/rec02;
-	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 16,4096,128 1,1,1 hdf-test/rec03;
+	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 8,512,2048 1,1,1 hdf-test/rec01;
+	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 1024,64,2048 1,1,1 hdf-test/rec02;
+	$TESTDIR/genBase.sh pureGen 1024,512,2048 0,0,0 1024,512,256 1,1,1 hdf-test/rec03;
 	$TESTDIR/ccBase.sh testCC;
 }
 
