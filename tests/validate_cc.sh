@@ -18,7 +18,7 @@ oneRec(){
 	$TESTDIR/ccBase.sh testCC;
 }
 
-TwoRec(){
+twoRec(){
 	# The first testGen is ineffective, but is must to have
 	$TESTDIR/genBase.sh testGen;
 	$EXEC fs -rmr hdf-test;

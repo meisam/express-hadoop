@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.SequenceFile;
@@ -125,9 +126,21 @@ public class ConflictCalculator extends Configured implements Tool {
 	    job.setMapOutputKeyClass(Text.class);
 	    final Path inDir = new Path(args[0]);
 	    final Path outDir = new Path(args[1]);
-	    FileInputFormat.setInputPaths(job, inDir);
 	    FileOutputFormat.setOutputPath(job, outDir);
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
+	    
+	    FileSystem fs = FileSystem.get(job);
+	    FileStatus[] files = fs.listStatus(inDir);
+	    int j = 0;
+	    for (int i=0;i<files.length;i++){
+	    	FileStatus file = files[i];
+	    	if (file.isDir()) {
+	    		FileInputFormat.addInputPath(job, file.getPath());
+	    	} else
+	    		j++;
+	    }
+	    if (j > 0) //files in the folder inDir
+	    	FileInputFormat.addInputPath(job, inDir);
 		
 		JobClient.runJob(job);
 		return 0;
