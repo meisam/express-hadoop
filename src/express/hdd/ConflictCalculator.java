@@ -145,21 +145,23 @@ public class ConflictCalculator extends Configured implements Tool {
 		conflictList.add((ArrayList<Pair<int[], int[]>>) recs.clone()); //0: all rectangles
 		conflictID.add(recIDList1);
 		
-		ArrayList<Pair<int[], int[]>> Conflict2List = new ArrayList<Pair<int[], int[]>>();
+		ArrayList<Pair<int[], int[]>> conflictList2 = new ArrayList<Pair<int[], int[]>>();
 		ArrayList<Set<Integer>> recIDList2 = new ArrayList<Set<Integer>>();
-		for (int i=0; i<recs.size(); i++)
+		for (int i=0; i<recs.size(); i++) {
 			for (int j=i+1; j<recs.size(); j++){
 				Pair<int[], int[]> conflict = HyperRectangleData.getHyperRectangleIntersection(recs.get(i), recs.get(j));
 				if (conflict != null)
 					try {
-						Conflict2List.add(conflict);
+						conflictList2.add(conflict);
 						recIDList2.add(new HashSet<Integer>(Arrays.asList(i,j)) );
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} 
 			}
-			
+		}
+		conflictList.add(conflictList2);
+		conflictID.add(recIDList2);
 	}
 	
 	private static void dumpConflictList(ArrayList<ArrayList<Pair<int[], int[]>>> conflictList, 
