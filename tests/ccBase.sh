@@ -14,6 +14,7 @@ pureCC() {
 
 testCC() {
 	echo "testCC $@";
+	$EXEC fs -rmr hdf-cc;
 	$EXEC jar $JAR express.hdd.ConflictCalculator hdf-test hdf-cc;
 }
 

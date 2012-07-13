@@ -3,8 +3,10 @@ package express.hdd;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -90,14 +92,21 @@ public class ConflictCalculator extends Configured implements Tool {
 			final SequenceFile.Writer writer = SequenceFile.createWriter(
 		              fs, job, nodeSummary, Text.class, Text.class, CompressionType.NONE);
 			
+			ArrayList<Pair<int[], int[]>> recs = new ArrayList<Pair<int[], int[]>>(); 
 			Text textOne = new Text("1");
-			
 			while (keys.hasNext()){
 				Text key = keys.next();
 				writer.append(key, textOne);
 				
-				
+				try {
+					recs.add(Tools.text2Pair(key));
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			
+			
 			writer.close();
 		}
 	}
