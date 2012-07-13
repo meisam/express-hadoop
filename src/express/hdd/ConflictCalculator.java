@@ -63,7 +63,7 @@ public class ConflictCalculator extends Configured implements Tool {
 	    }
 	  }
 
-	public static class CCReducer extends MapReduceBase implements Reducer<Text, Text, Text, Integer>{
+	public static class CCReducer extends MapReduceBase implements Reducer<Text, Text, Text, Text>{
 		Path OutputDirectory;
 		protected FileSystem fs;
 		private JobConf job;
@@ -81,18 +81,22 @@ public class ConflictCalculator extends Configured implements Tool {
 		}
 		@Override
 		public void reduce(Text nodeID, Iterator<Text> keys,
-				OutputCollector<Text, Integer> fout, Reporter arg3)
+				OutputCollector<Text, Text> fout, Reporter arg3)
 				throws IOException {
 			
 			System.out.printf("start reducer\n");
 			
 			Path nodeSummary = new Path(OutputDirectory, nodeID.toString());
 			final SequenceFile.Writer writer = SequenceFile.createWriter(
-		              fs, job, nodeSummary, Text.class, Integer.class, CompressionType.NONE);
+		              fs, job, nodeSummary, Text.class, Text.class, CompressionType.NONE);
+			
+			Text textOne = new Text("1");
 			
 			while (keys.hasNext()){
 				Text key = keys.next();
-				writer.append(key, 1);					
+				writer.append(key, textOne);
+				
+				
 			}
 			writer.close();
 		}
@@ -108,7 +112,7 @@ public class ConflictCalculator extends Configured implements Tool {
 		job.setMapperClass(CCMapper.class);
 	    job.setReducerClass(CCReducer.class);
 	    job.setOutputKeyClass(Text.class);
-	    job.setOutputValueClass(Integer.class);
+	    job.setOutputValueClass(Text.class);
 	    job.setMapOutputKeyClass(Text.class);
 	    final Path inDir = new Path(args[0]);
 	    final Path outDir = new Path(args[1]);

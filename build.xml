@@ -26,6 +26,11 @@
 	</target>
 	
 	<target name="clean-build" depends="clean,jar"/>
+	
+	<target name="clean-all" depends="clean">
+			<delete file="${jar.dir}/${ant.project.name}.jar"/>
+	</target>
+		
 
 	<target name="windows">
 		<exec executable="D:/cygwin/bin/bash" newenvironment="false" dir=".">
