@@ -130,23 +130,29 @@ public class ConflictCalculator extends Configured implements Tool {
 	    FileOutputFormat.setOutputPath(job, outDir);
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    
-	    FileSystem fs = FileSystem.get(job);
-	    FileStatus[] files = fs.listStatus(inDir);
-	    int j = 0;
-	    ArrayList<String> paths = new ArrayList<String>();  
-	    for (int i=0;i<files.length;i++){
-	    	FileStatus file = files[i];
-	    	if (file.isDir()) {
-	    		paths.add(file.getPath().toString());
-	    	} else
-	    		j++;
-	    }
-	    if (j > 0) //files in the folder inDir
-	    	paths.add(inDir.toString());
-	    FileInputFormat.addInputPaths(job, StringUtils.join(",", paths));
+	    addAllFiles(job, inDir);
 		
 		JobClient.runJob(job);
 		return 0;
+	}
+	
+	private static void addAllFiles(JobConf job, Path in) {
+		FileSystem fs;
+		try {
+			fs = FileSystem.get(job);
+		    FileStatus[] files = fs.listStatus(in);
+		    for (int i=0;i<files.length;i++){
+		    	FileStatus file = files[i];
+		    	if (file.isDir()) {
+		    		addAllFiles(job, file.getPath());
+		    	} else {
+		    		FileInputFormat.addInputPath(job, file.getPath());
+		    	}
+		    }
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {
