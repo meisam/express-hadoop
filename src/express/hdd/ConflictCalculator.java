@@ -210,7 +210,7 @@ public class ConflictCalculator extends Configured implements Tool {
 	    job.setOutputValueClass(Text.class);
 	    job.setMapOutputKeyClass(Text.class);
 	    final Path inDir = new Path(args[0]);
-	    final Path outDir = new Path(args[1]);
+	    final Path outDir = new Path("/tmp");
 	    //FileOutputFormat.setOutputPath(job, outDir);
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    

@@ -10,6 +10,7 @@ pureCC() {
 
 	echo "pureCC $@";
 	$EXEC jar $JAR express.hdd.ConflictCalculator ${INDIR} ${OUTDIR};
+	$EXEC fs -rmr /tmp;
 }
 
 testCC() {
