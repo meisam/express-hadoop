@@ -26,7 +26,7 @@ report() {
 	for RECORD in $RECORDS; do
 		local ID=$(basename $RECORD);
 		local TMP=$(mktemp);
-		$EXEC fs -text $RECORD > $TMP 2>/dev/null;;
+		$EXEC fs -text $RECORD > $TMP 2>/dev/null;
 		local LEVELS=$(cat $TMP|awk -F'\t' '{print $3}'|uniq);
 		for LEVEL in $LEVELS; do
 			local SUM=$(cat $TMP| awk -F'\t' -v L=$LEVEL '{if ($3 == L) print $0}'| awk -F']|\t|;|,|\\[' '{SUM+=$7*$8*$9} END {print SUM/1024/1204}');
