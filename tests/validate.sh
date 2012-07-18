@@ -2,13 +2,8 @@
 
 TESTDIR=$(dirname $0);
 TOOLDIR=$TESTDIR/../tools;
+source $TESTDIR/env.sh;
 
-HADOOP=/mnt/common/siyuan/src/hadoop-1.0.1;
-BIN=$HADOOP/bin;
-CONF_DIR=$HADOOP/conf;
-CONF=$HADOOP/conf/slaves;
-EXEC=$HADOOP/bin/hadoop;
-JAR=$HADOOP/express-hadoop.jar;
 NODES=$(cat $CONF);
 
 flush() {

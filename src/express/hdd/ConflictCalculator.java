@@ -121,6 +121,7 @@ public class ConflictCalculator extends Configured implements Tool {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private static void calculateConflicts(ArrayList<Pair<int[], int[]>> recs, 
 			ArrayList<ArrayList<Pair<int[], int[]>>> conflictList, ArrayList<ArrayList<Set<Integer>>> conflictID) {
 		ArrayList<Set<Integer>> recIDList1 = new ArrayList<Set<Integer>>();
