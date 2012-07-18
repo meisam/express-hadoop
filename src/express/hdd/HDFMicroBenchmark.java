@@ -192,7 +192,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 			while (values.hasNext()){
 				Text value = values.next();
 				int keyEndOffset = value.find("]", value.find("]")+1); //find the second ']' sincce key looks like[];[]
-				Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset));
+				Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset+1));
 				try {
 					Pair<int[], int[]> output_key = Tools.text2Pair(outputKey);
 				} catch (Exception e) {
@@ -208,7 +208,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 				if (isWriter) {
 					writer.append(outputKey, value);	
 				}
-				System.out.printf("key = %s, outputKey = %s,offset = %s, length = %s, %d values with total size %d\n", 
+				System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d\n", 
 		    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
 		    			Arrays.toString(length), itr, vsize);
 			}
