@@ -99,7 +99,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 			Iterator<int[]> chunkOffsetIterator = recData.iterator();
 			int[] aboffset = {};
 			while(chunkOffsetIterator.hasNext()){
-				int[] itrOffset = chunkOffsetIterator.next();
+				int[] itrOffset = chunkOffsetIterator.next(); 
 				Pair<int[], int[]> outputPair = HyperRectangleData.getHyperRectangleIntersection(offset,
 						length, itrOffset, clength,dimension);
 				if (outputPair == null)
@@ -111,9 +111,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 				HyperRectangleData.getChunkOfHighDimData(value.getBytes(), length, dimension, buffer, roffset,rlength);
 				
 				try {
-					Text fkey = Tools.pair2Text(itrOffset, rlength); //final key
+					Text fkey = Tools.pair2Text(itrOffset, recData.getChunkLength()); //final key
 					Text fvalue = Tools.pair2Text(aboffset, rlength); // final value = relative key + value
-					fvalue.append(buffer, 0, buffer.length);
+					fvalue.append(buffer, 0, buffer.length); // fvalue = fvalue buffer
 					fout.collect(fkey, fvalue);
 					System.out.printf("fkey = %s, rkey = %s, rlength = %s, value has length of %d\n", 
 			    			fkey.toString(), Arrays.toString(aboffset), Arrays.toString(rlength), fvalue.getLength());
@@ -183,22 +183,34 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 				e.printStackTrace(); 
 			}
 			
-			byte[] buffer = new byte[recData.getChunkSize() + 8192];
-			ByteBuffer target = ByteBuffer.wrap(buffer);
+			//byte[] buffer = new byte[recData.getChunkSize() + 8192];
+			//ByteBuffer target = ByteBuffer.wrap(buffer);
 			int itr = 0; int vsize = 0;
 			Path reducerFile = new Path(OutputDir, key.toString());
 			final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
 		    			, reducerFile, key.getClass(), Text.class, CompressionType.NONE);
 			while (values.hasNext()){
 				Text value = values.next();
-				itr++;
-				vsize = vsize + value.getLength();
-				byte[] ready2dump = value.getBytes();
-				int vlength = ready2dump.length - 32;
-				target.put(ready2dump, 32, vlength);
-				if (isWriter) {
-					writer.append(key, value);	
+				int keyEndOffset = value.find("]", value.find("]")+1); //find the second ']' sincce key looks like[];[]
+				Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset));
+				try {
+					Pair<int[], int[]> output_key = Tools.text2Pair(outputKey);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+				
+				itr++;
+				//vsize = vsize + value.getLength();
+				//byte[] ready2dump = value.getBytes();
+				//int vlength = ready2dump.length - 32;
+				//target.put(ready2dump, 32, vlength);
+				if (isWriter) {
+					writer.append(outputKey, value);	
+				}
+				System.out.printf("key = %s, outputKey = %s,offset = %s, length = %s, %d values with total size %d\n", 
+		    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
+		    			Arrays.toString(length), itr, vsize);
 			}
 			if (isWait)
 				try {
@@ -207,10 +219,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-			writer.close();
-
-			System.out.printf("key = %s, offset = %s, length = %s, %d values with total size %d\n", 
-	    			key.toString(), Arrays.toString(offset), Arrays.toString(length), itr, vsize);			
+			writer.close();			
 		}
 		
 	}
