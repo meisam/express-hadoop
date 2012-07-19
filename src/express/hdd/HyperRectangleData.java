@@ -408,4 +408,14 @@ public class HyperRectangleData implements Iterable<int[]>, Iterator<int[]> {
 			System.out.println(Arrays.toString(offset));
 		}
 	}
+	
+	public static boolean hasIncreasingChunkNumber(Pair<int[], int[]> x, Pair<int[], int[]> y) {
+		for (int i=0; i<x.getLeft().length; i++) {
+			if (x.getLeft()[i] < y.getLeft()[i])
+				return true;
+			if (x.getLeft()[i] > y.getLeft()[i])
+				return false;
+		}		
+		return true;
+	}
 }
