@@ -24,8 +24,8 @@ public class HDFPartitioner implements Partitioner<Text,Text> {
 			e.printStackTrace(); 
 		}
 		int rnum = recData.getChunkNumber(offset);
-		System.out.println("Partitioner:: offset:" + Arrays.toString(offset) + ", clength:" + 
-				Arrays.toString(clength) + ", dataSize:" + Arrays.toString(dataSize) + ", #reducer:" + rnum);
+		//System.out.println("Partitioner:: offset:" + Arrays.toString(offset) + ", clength:" + 
+		//		Arrays.toString(clength) + ", dataSize:" + Arrays.toString(dataSize) + ", #reducer:" + rnum);
 		return rnum;
 	}
  
