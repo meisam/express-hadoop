@@ -1,8 +1,7 @@
 #!/bin/bash
 # Conflict Calculator
 
-TESTDIR=`dirname $0`;
-source $TESTDIR/env.sh;
+source `dirname $0`/../conf/.env;
 
 pureGen() {
 	echo "pureGen $@";

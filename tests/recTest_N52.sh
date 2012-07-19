@@ -1,7 +1,6 @@
 #!/bin/bash
 
-TESTDIR=$(dirname $0);
-source $TESTDIR/env.sh;
+source `dirname $0`/../conf/.env;
 
 FLIST="$($EXEC fs -ls 2>/dev/null|grep data|awk '{print $8}')";
 REPS="1";

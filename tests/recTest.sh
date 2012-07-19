@@ -1,7 +1,6 @@
 #!/bin/bash
 
-TESTDIR=$(dirname $0);
-source $TESTDIR/env.sh;
+source `dirname $0`/../conf/.env;
 
 FLIST=$1;
 REPS=$2;

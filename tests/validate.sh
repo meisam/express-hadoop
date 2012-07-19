@@ -1,8 +1,6 @@
 #!/bin/bash
 
-TESTDIR=$(dirname $0);
-TOOLDIR=$TESTDIR/../tools;
-source $TESTDIR/env.sh;
+source `dirname $0`/../conf/.env;
 
 NODES=$(cat $CONF);
 

@@ -1,7 +1,6 @@
 #!/bin/bash
 
-MY_DIR=`dirname $0`;
-source $MY_DIR/env.sh;
+source `dirname $0`/../conf/.env;
 
 DSIZE=$1;
 RSIZE=$2;

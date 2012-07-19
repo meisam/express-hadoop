@@ -1,9 +1,7 @@
 #!/bin/bash
 #Test for block reconstruction
 
-TESTDIR=$(dirname $0);
-source $TESTDIR/env.sh;
-TOOLDIR=$TESTDIR/../tools;
+source `dirname $0`/../conf/.env;
 
 NODES=$(cat $CONF);
 
