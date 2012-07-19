@@ -22,6 +22,7 @@ import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.SequenceFileAsTextInputFormat;
+import org.apache.hadoop.mapred.lib.NullOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
@@ -253,8 +254,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    job.setJarByClass(HDFMicroBenchmark.class);
 	    job.setMapperClass(HDFMicroMapper.class);
 	    job.setReducerClass(HDFMicroReducer.class);
-	    job.setOutputKeyClass(Text.class);
-	    job.setOutputValueClass(Text.class);
+	    //job.setOutputKeyClass(Text.class);
+	    //job.setOutputValueClass(Text.class);
+	    job.setOutputFormat(NullOutputFormat.class);// Each reducer outputs to a single file
 	    job.setPartitionerClass(HDFPartitioner.class);
 	    if (job.getBoolean("hdf.reduce.bypass", false))
 	    	job.setNumReduceTasks(0);
