@@ -200,9 +200,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					if (isWriter) {
 						writer.append(outputKey, value);	
 					}
-					System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d\n", 
+					System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d, writer is %s\n", 
 			    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
-			    			Arrays.toString(length), itr, vsize);
+			    			Arrays.toString(length), itr, vsize, Boolean.toString(isWriter));
 				}
 				if (isWait)
 						Thread.sleep(waitSecs * 1000);
@@ -269,9 +269,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    job.setSpeculativeExecution(false);
 	    
 	    final Path inDir = new Path(args[6]);
-	    final Path outDir = new Path(args[7]);
+	    //final Path outDir = new Path(args[7]);
 	    FileInputFormat.setInputPaths(job, inDir);
-	    FileOutputFormat.setOutputPath(job, outDir);
+	    //FileOutputFormat.setOutputPath(job, outDir);
 		
 		JobClient.runJob(job);    
 		return 0;
