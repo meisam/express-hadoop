@@ -116,8 +116,8 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					Text fvalue = Tools.pair2Text(aboffset, rlength); // final value = relative key + value
 					fvalue.append(buffer, 0, buffer.length); // fvalue = fvalue buffer
 					fout.collect(fkey, fvalue);
-					System.out.printf("fkey = %s, rkey = %s, rlength = %s, value has length of %d\n", 
-			    			fkey.toString(), Arrays.toString(aboffset), Arrays.toString(rlength), fvalue.getLength());
+					 //System.out.printf("fkey = %s, rkey = %s, rlength = %s, value has length of %d\n", 
+			    	//		fkey.toString(), Arrays.toString(aboffset), Arrays.toString(rlength), fvalue.getLength());
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
