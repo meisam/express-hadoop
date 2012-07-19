@@ -18,6 +18,7 @@ public class HDFOutputKeyComparator implements RawComparator<Text> {
 		try {
 			Pair<int[], int[]> x = Tools.text2Pair(tx);
 			Pair<int[], int[]> y = Tools.text2Pair(ty);
+			System.out.printf("HDFOutputKeyComparator: x=%s and y=%s\n", tx.toString(), ty.toString());
 			
 			if (HyperRectangleData.hasIncreasingChunkNumber(x, y))
 				return -1;

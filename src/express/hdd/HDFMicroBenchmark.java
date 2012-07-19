@@ -268,7 +268,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    job.setSpeculativeExecution(false);
-	    //job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
+	    job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
 	    
 	    final Path inDir = new Path(args[6]);
 	    final Path outDir = new Path(args[7]);
