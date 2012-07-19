@@ -17,8 +17,8 @@ EXPRESS is proposed to enable efficient processing of high-dimensional scientifi
 
     ``ant -f build.xml jar``
   
-3. Add express-hadoop.jar to CLASSPATH
-3. Recompile hadoop-1.0.1
+3. Edit ${EXPRESS_ROOT}/test/env.sh to set the path of Hadoop and Express 
+4. Recompile hadoop-1.0.1
 
     ``ant -f build.xml compile``
 
