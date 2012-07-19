@@ -178,48 +178,40 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 				Pair<int[], int[]> keyPair = Tools.text2Pair(key);
 				offset = keyPair.getLeft();
 				length = keyPair.getRight();
+			
+				//byte[] buffer = new byte[recData.getChunkSize() + 8192];
+				//ByteBuffer target = ByteBuffer.wrap(buffer);
+				int itr = 0; int vsize = 0;
+				Path reducerFile = new Path(OutputDir, Integer.toString(recData.getChunkNumber(keyPair.getLeft())) );
+				final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
+			    			, reducerFile, key.getClass(), Text.class, CompressionType.NONE);
+				while (values.hasNext()){
+					Text value = values.next();
+					int keyEndOffset = value.find("]", value.find("]")+1); //find the second ']' sincce key looks like[];[]
+					Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset+1));
+					Pair<int[], int[]> output_key = Tools.text2Pair(outputKey);
+						
+					itr++;
+					//vsize = vsize + value.getLength();
+					//byte[] ready2dump = value.getBytes();
+					//int vlength = ready2dump.length - 32;
+					//target.put(ready2dump, 32, vlength);
+					if (isWriter) {
+						writer.append(outputKey, value);	
+					}
+					System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d\n", 
+			    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
+			    			Arrays.toString(length), itr, vsize);
+				}
+				if (isWait)
+						Thread.sleep(waitSecs * 1000);
+				writer.close();		
+			
+
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace(); 
 			}
-			
-			//byte[] buffer = new byte[recData.getChunkSize() + 8192];
-			//ByteBuffer target = ByteBuffer.wrap(buffer);
-			int itr = 0; int vsize = 0;
-			Path reducerFile = new Path(OutputDir, key.toString());
-			final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
-		    			, reducerFile, key.getClass(), Text.class, CompressionType.NONE);
-			while (values.hasNext()){
-				Text value = values.next();
-				int keyEndOffset = value.find("]", value.find("]")+1); //find the second ']' sincce key looks like[];[]
-				Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset+1));
-				try {
-					Pair<int[], int[]> output_key = Tools.text2Pair(outputKey);
-				} catch (Exception e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
-				itr++;
-				//vsize = vsize + value.getLength();
-				//byte[] ready2dump = value.getBytes();
-				//int vlength = ready2dump.length - 32;
-				//target.put(ready2dump, 32, vlength);
-				if (isWriter) {
-					writer.append(outputKey, value);	
-				}
-				System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d\n", 
-		    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
-		    			Arrays.toString(length), itr, vsize);
-			}
-			if (isWait)
-				try {
-					Thread.sleep(waitSecs * 1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			writer.close();			
 		}
 		
 	}
