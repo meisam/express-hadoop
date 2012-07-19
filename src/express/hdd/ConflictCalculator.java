@@ -230,7 +230,7 @@ public class ConflictCalculator extends Configured implements Tool {
 		    	FileStatus file = files[i];
 		    	if (file.isDir()) {
 		    		addAllFiles(job, file.getPath());
-		    	} else {
+		    	} else if (!file.getPath().getName().startsWith("_")) {
 		    		FileInputFormat.addInputPath(job, file.getPath());
 		    	}
 		    }

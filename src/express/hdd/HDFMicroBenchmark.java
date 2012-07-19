@@ -242,6 +242,8 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 		if (args.length >= 11)
 			job.setBoolean("hdf.reduce.one", new Boolean(args[10]));
 		
+		job.setBoolean("mapreduce.fileoutputcommitter.marksuccessfuljobs", false); //don't put _SUCCESS in output folder
+		
 		
 		HyperRectangleData data = new HyperRectangleData(
 				Tools.getHDFVectorFromConf(job, "DataSize"),
