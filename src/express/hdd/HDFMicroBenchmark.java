@@ -200,9 +200,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					if (isWriter) {
 						writer.append(outputKey, value);	
 					}
-					System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d, writer is %s\n", 
-			    			key.toString(), outputKey.toString(), Arrays.toString(offset), 
-			    			Arrays.toString(length), itr, vsize, Boolean.toString(isWriter));
+					//System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d, writer is %s\n", 
+			    	//		key.toString(), outputKey.toString(), Arrays.toString(offset), 
+			    	//		Arrays.toString(length), itr, vsize, Boolean.toString(isWriter));
 				}
 				if (isWait)
 						Thread.sleep(waitSecs * 1000);
