@@ -254,8 +254,8 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    job.setJarByClass(HDFMicroBenchmark.class);
 	    job.setMapperClass(HDFMicroMapper.class);
 	    job.setReducerClass(HDFMicroReducer.class);
-	    //job.setOutputKeyClass(Text.class);
-	    //job.setOutputValueClass(Text.class);
+	    job.setOutputKeyClass(Text.class);
+	    job.setOutputValueClass(Text.class);
 	    job.setOutputFormat(NullOutputFormat.class);// Each reducer outputs to a single file
 	    job.setPartitionerClass(HDFPartitioner.class);
 	    if (job.getBoolean("hdf.reduce.bypass", false))
@@ -269,9 +269,9 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    job.setSpeculativeExecution(false);
 	    
 	    final Path inDir = new Path(args[6]);
-	    //final Path outDir = new Path(args[7]);
+	    final Path outDir = new Path(args[7]);
 	    FileInputFormat.setInputPaths(job, inDir);
-	    //FileOutputFormat.setOutputPath(job, outDir);
+	    FileOutputFormat.setOutputPath(job, outDir);
 		
 		JobClient.runJob(job);    
 		return 0;
