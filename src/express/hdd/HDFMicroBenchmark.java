@@ -177,7 +177,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 			int[] offset = {}; 
 	    	int[] length = {};
 	    	try {
-				Pair<int[], int[]> keyPair = Tools.text2Pair(key);
+				Pair<int[], int[]> keyPair = Tools.text2Pair(HDFIntermediateKey.getNaturalKey(key));
 				offset = keyPair.getLeft();
 				length = keyPair.getRight();
 			
