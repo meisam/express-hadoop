@@ -157,8 +157,10 @@ public class Tools {
 		//System.out.println("Pair has " + pair.length + " elements");
 		//for (int i=0; i<pair.length; i++)
 		//	System.out.println("Pair (" + i + ") = " + pair[i]);
-		String[] soffset = pair[0].replace("[", "").replace("]", "").replace(" ", "").split(",");
-		String[] slength = pair[1].replace("[", "").replace("]", "").replace(" ", "").split(",");
+		//String[] soffset = pair[0].replace("[", "").replace("]", "").replace(" ", "").split(",");
+		//String[] slength = pair[1].replace("[", "").replace("]", "").replace(" ", "").split(",");
+		String[] soffset = pair[0].split("[")[1].split("]")[0].replace(" ", "").split(",");
+		String[] slength = pair[1].split("[")[1].split("]")[0].replace(" ", "").split(",");
 		slength[slength.length-1] = slength[slength.length-1].trim();
 		//for (int i=0; i<slength.length; i++)
 		//	System.out.println("Length (" + i + ") = [" + slength[i] + "]");
