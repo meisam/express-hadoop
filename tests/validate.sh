@@ -41,14 +41,40 @@ reset4test() {
 	$EXEC dfsadmin -safemode wait;
 }
 
-hdfgen;
-reset4test;
+mediumTest() {
+	hdfgen;
+	reset4test;
+	
+	$EXEC fs -rmr mismatch.r1;
+	flush "$NODES";
+	$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 1024,512,128 hdf-test mismatch.r1 'true';
+	
+	$EXEC fs -rmr match.r1;
+	flush "$NODES";
+	$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 64,512,2048 hdf-test match.r1 'true';
+}
 
-$EXEC fs -rmr mismatch.r1;
-flush "$NODES";
-$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 1024,512,128 hdf-test mismatch.r1 'true';
+pureBM(){
+	local dataSize=$1;
+	local sampleOffset=$2;
+	local sampleSliceSize=$3;
+	local sliceInSample=$4;
+	local OSampleOffest=$5;
+	local OSampleSize=$6;
+	local inputDir=$7;
+	local outputDir=$8;
 
-$EXEC fs -rmr match.r1;
-flush "$NODES";
-$EXEC jar $JAR express.hdd.HDFMicroBenchmark 1024,512,2048 0,0,0 8,512,2048 8,1,1 0,0,0 64,512,2048 hdf-test match.r1 'true';
+	$EXEC jar $JAR express.hdd.HDFMicroBenchmark $dataSize $sampleOffset $sampleSliceSize $sliceInSample $OSampleOffest $OSampleSize $inputDir $outputDir 'true';
+}
 
+smallTest(){
+	echo "smallTest $@";
+	$TESTDIR/genBase.sh testGen;
+	$EXEC fs -rmr hdf-test;
+	
+	$TESTDIR/genBase.sh pureGen 128,512,512 0,0,0 8,512,512 1,1,1 hdf-test;
+	pureBM 128,512,512 0,0,0 8,512,512 1,1,1 0,0,0 8,512,512 hdf-test match.r1;
+	pureBM 128,512,512 0,0,0 8,512,512 1,1,1 0,0,0 128,512,32 hdf-test mismatch.r1;
+}
+
+eval "$@";
