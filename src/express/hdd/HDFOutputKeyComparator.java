@@ -16,14 +16,13 @@ public class HDFOutputKeyComparator implements RawComparator<Text> {
 	@Override
 	public int compare(Text tx, Text ty) {
 		try {
-			//System.out.printf("HDFOutputKeyComparator: x=%s and y=%s\n", tx.toString(), ty.toString());
-			
-			Pair<int[], int[]> x = Tools.text2Pair(HDFIntermediateKey.getSecondaryKey(tx));
-			Pair<int[], int[]> y = Tools.text2Pair(HDFIntermediateKey.getSecondaryKey(ty));
-				
-			if (HyperRectangleData.hasIncreasingChunkNumber(x, y))
-				return -1;
-			else
+//			System.out.printf("HDFOutputKeyComparator: x=%s and y=%s\n", tx.toString(), ty.toString());
+//			Pair<int[], int[]> x = Tools.text2Pair(HDFIntermediateKey.getSecondaryKey(tx));
+//			Pair<int[], int[]> y = Tools.text2Pair(HDFIntermediateKey.getSecondaryKey(ty));
+//				
+//			if (HyperRectangleData.hasIncreasingChunkNumber(x, y))
+//				return -1;
+//			else
 				return 1;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
