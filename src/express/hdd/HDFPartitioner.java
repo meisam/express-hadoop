@@ -17,7 +17,7 @@ public class HDFPartitioner implements Partitioner<Text,Text> {
 	public int getPartition(Text key, Text value, int numPartitions) {
 		int [] offset = {};
 		try {
-			Pair<int[], int[]> keyPair = Tools.text2Pair(key);
+			Pair<int[], int[]> keyPair = Tools.text2Pair(HDFIntermediateKey.getNaturalKey(key));
 			offset = keyPair.getLeft();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

@@ -112,10 +112,11 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 				HyperRectangleData.getChunkOfHighDimData(value.getBytes(), length, dimension, buffer, roffset,rlength);
 				
 				try {
-					Text fkey = Tools.pair2Text(itrOffset, recData.getChunkLength()); //final key
+					Text naturalKey = Tools.pair2Text(itrOffset, recData.getChunkLength());
+					Text secondaryKey = Tools.pair2Text(aboffset, rlength); 
 					Text fvalue = Tools.pair2Text(aboffset, rlength); // final value = relative key + value
 					fvalue.append(buffer, 0, buffer.length); // fvalue = fvalue buffer
-					fout.collect(fkey, fvalue);
+					fout.collect(HDFIntermediateKey.merge(naturalKey, secondaryKey), fvalue);
 					 //System.out.printf("fkey = %s, rkey = %s, rlength = %s, value has length of %d\n", 
 			    	//		fkey.toString(), Arrays.toString(aboffset), Arrays.toString(rlength), fvalue.getLength());
 				} catch (Exception e) {
@@ -269,7 +270,8 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    job.setSpeculativeExecution(false);
-	    //job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
+	    job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
+	    job.setOutputValueGroupingComparator(HDFoutputvaluegroupingcomparator.class);
 	    
 	    final Path inDir = new Path(args[6]);
 	    final Path outDir = new Path(args[7]);
