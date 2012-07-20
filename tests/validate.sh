@@ -73,7 +73,9 @@ smallTest(){
 	$EXEC fs -rmr hdf-test;
 	
 	$TESTDIR/genBase.sh pureGen 128,512,512 0,0,0 8,512,512 1,1,1 hdf-test;
+	$EXEC fs -rmr match.r1;
 	pureBM 128,512,512 0,0,0 8,512,512 1,1,1 0,0,0 8,512,512 hdf-test match.r1;
+	$EXEC fs -rmr mismatch.r1;
 	pureBM 128,512,512 0,0,0 8,512,512 1,1,1 0,0,0 128,512,32 hdf-test mismatch.r1;
 }
 
