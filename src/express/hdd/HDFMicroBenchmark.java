@@ -190,6 +190,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					Text value = values.next();
 					int keyEndOffset = value.find("]", value.find("]")+1); //find the second ']' sincce key looks like[];[]
 					Text outputKey = new Text(Arrays.copyOfRange(value.getBytes(), 0, keyEndOffset+1));
+					Text outputValue = new Text(Arrays.copyOfRange(value.getBytes(), keyEndOffset+1, value.getLength()));
 					Pair<int[], int[]> output_key = Tools.text2Pair(outputKey);
 						
 					itr++;
@@ -198,7 +199,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 					//int vlength = ready2dump.length - 32;
 					//target.put(ready2dump, 32, vlength);
 					if (isWriter) {
-						writer.append(outputKey, value);	
+						writer.append(outputKey, outputValue);	
 					}
 					//System.out.printf("key = %s, outputKey = %s, offset = %s, length = %s, %d values with total size %d, writer is %s\n", 
 			    	//		key.toString(), outputKey.toString(), Arrays.toString(offset), 
@@ -268,7 +269,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    
 	    job.setInputFormat(SequenceFileAsTextInputFormat.class);
 	    job.setSpeculativeExecution(false);
-	    job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
+	    //job.setOutputKeyComparatorClass(HDFOutputKeyComparator.class);
 	    
 	    final Path inDir = new Path(args[6]);
 	    final Path outDir = new Path(args[7]);

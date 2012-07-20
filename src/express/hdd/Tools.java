@@ -11,7 +11,7 @@ public class Tools {
 		if (sarray != null) {
 			int intarray[] = new int[sarray.length];
 			for (int i = 0; i < sarray.length; i++) {
-					intarray[i] = Integer.parseInt(sarray[i]);
+					intarray[i] = Integer.parseInt(sarray[i].trim());
 			}
 			return intarray;
 		}
