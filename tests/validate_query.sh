@@ -14,7 +14,7 @@ oneQuery(){
 	$EXEC fs -rmr ${INDIR};
 	$EXEC fs -rmr ${OUTDIR};
 	$TESTDIR/genBase.sh pureGen ${RECINFO} ${INDIR};
-	$TESTDIR/queryBase.sh pureQuery ${RECINFO} "32,32,32" "128 128 128" ${INDIR} ${OUTDIR};
+	$TESTDIR/queryBase.sh pureQuery ${RECINFO} "32,32,32" "128,128,128" ${INDIR} ${OUTDIR};
 }
 
 eval "$@";
