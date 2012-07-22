@@ -217,7 +217,7 @@ public class HDFSetQuery extends Configured implements Tool {
 			ArrayList<int[]> offsets, ArrayList<int[]> lengths) {
 		HashSet<Integer> chunkIDPool = new HashSet<Integer>();
 		for (int i=0; i<offsets.size(); i++){
-			System.out.printf("has chunk %s\n", offsets.get(i).toString() + " | " + lengths.get(i).toString());
+			System.out.printf("has chunk %s\n", Arrays.toString(offsets.get(i)) + " | " + Arrays.toString(lengths.get(i)));
 			int[] ids = rec.getOverlappedChunks(offsets.get(i), lengths.get(i));
 			for (int j=0; j<ids.length; j++)
 				chunkIDPool.add(ids[j]);
