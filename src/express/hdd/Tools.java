@@ -1,5 +1,6 @@
 package express.hdd;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -199,5 +200,32 @@ public class Tools {
 		    listString += s.toString() + " ";
 		}
 		return listString;
+	}
+	
+	public static ArrayList<int[]> str2IntArrayList(String in) throws Exception {
+		ArrayList<int[]> out = new ArrayList<int[]>();
+		String[] sins = in.replaceAll("[ ]++", " ").split(" ");
+		for(int i=0; i<sins.length; i++) {
+			out.add(StringArray2IntArray(sins[i].split(",")));
+		}
+		return out;
+	}
+	
+	public static int compareIntArray(int[] x, int[] y) {
+		if (x.length != y.length)
+			return 1;
+		for (int i=0; i<x.length; i++) {
+			if (x[i] != y[i])
+				return 1;
+		}
+		return 0;
+	}
+	
+	public static int compareChunk(Pair<int[], int[]> a, Pair<int[], int[]> b) {
+		if ((compareIntArray(a.getLeft(), b.getLeft()) !=0) || 
+				(compareIntArray(a.getRight(), b.getRight()) !=0))
+			return 1;
+		
+		return 0;
 	}
 }

@@ -101,8 +101,8 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 			int[] aboffset = {};
 			while(chunkOffsetIterator.hasNext()){
 				int[] itrOffset = chunkOffsetIterator.next(); 
-				Pair<int[], int[]> outputPair = HyperRectangleData.getHyperRectangleIntersection(offset,
-						length, itrOffset, clength,dimension);
+				Pair<int[], int[]> outputPair = HyperRectangleData.getHyperRectangleIntersection(
+						offset, length, itrOffset, clength,dimension);
 				if (outputPair == null)
 					continue;
 				aboffset = outputPair.getLeft();
@@ -261,6 +261,7 @@ public class HDFMicroBenchmark extends Configured implements Tool{
 	    job.setOutputValueClass(Text.class);
 	    job.setOutputFormat(NullOutputFormat.class);// Each reducer outputs to a single file
 	    job.setPartitionerClass(HDFPartitioner.class);
+	    
 	    if (job.getBoolean("hdf.reduce.bypass", false))
 	    	job.setNumReduceTasks(0);
 	    else if (job.getBoolean("hdf.reduce.one", false))
