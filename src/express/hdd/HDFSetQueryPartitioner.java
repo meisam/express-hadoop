@@ -15,7 +15,7 @@ public class HDFSetQueryPartitioner implements Partitioner<Text,Text> {
 		try {
 			Pair<int[], int[]> inputChunk = Tools.text2Pair(HDFIntermediateKey.getNaturalKey(key));
 			for (int i=0; i<offsets.size(); i++) {
-				if (Tools.compareChunk(inputChunk, new Pair<int[], int[]>(offsets.get(i), lengths.get(i)) ) != 0)
+				if (Tools.compareChunk(inputChunk, new Pair<int[], int[]>(offsets.get(i), lengths.get(i)) ) == 0)
 					return i;
 			}
 		} catch (Exception e) {

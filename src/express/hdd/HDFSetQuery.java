@@ -103,6 +103,8 @@ public class HDFSetQuery extends Configured implements Tool {
 		private static Path OutputDir;
 		private static boolean isWriter;
 		private static int waitSecs;
+		private static ArrayList<int[]> offsets;
+		private static ArrayList<int[]> lengths;
 		
 		public void configure(JobConf job) {
 			try {
@@ -110,7 +112,10 @@ public class HDFSetQuery extends Configured implements Tool {
 				this.job = job;
 				OutputDir=  new Path(job.get("OutputDirectory").toString());
 				isWriter = job.getBoolean("hdf.reduce.write", false);
-				waitSecs = Integer.parseInt(job.get("hdf.reduce.wait"));			     
+				waitSecs = Integer.parseInt(job.get("hdf.reduce.wait"));	
+				
+				offsets = Tools.str2IntArrayList(job.get("ChunkOffsets"));
+				lengths = Tools.str2IntArrayList(job.get("ChunkLengths"));
 		     } catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -124,8 +129,15 @@ public class HDFSetQuery extends Configured implements Tool {
 		
 			try {
 				Pair<int[], int[]> outputChunk = Tools.text2Pair(HDFIntermediateKey.getNaturalKey(key));
-				
-				Path reducerFile = new Path(OutputDir, Tools.pair2Text(outputChunk).toString());
+				int queryID = -1;
+				for (int i=0; i<offsets.size(); i++) {
+					if (Tools.compareChunk(outputChunk, 
+							new Pair<int[], int[]>(offsets.get(i), lengths.get(i)) ) == 0) {
+						queryID = i;
+						break;
+					}
+				}
+				Path reducerFile = new Path(OutputDir, Integer.toString(queryID));
 				final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
 			    			, reducerFile, key.getClass(), Text.class, CompressionType.NONE);
 				while (values.hasNext()){
@@ -218,17 +230,16 @@ public class HDFSetQuery extends Configured implements Tool {
 			ArrayList<int[]> offsets, ArrayList<int[]> lengths) {
 		HashSet<Integer> chunkIDPool = new HashSet<Integer>();
 		for (int i=0; i<offsets.size(); i++){
-			System.out.printf("has chunk %s\n", Arrays.toString(offsets.get(i)) + " | " + Arrays.toString(lengths.get(i)));
+			//System.out.printf("has chunk %s\n", Arrays.toString(offsets.get(i)) + " | " + Arrays.toString(lengths.get(i)));
 			int[] ids = rec.getOverlappedChunks(offsets.get(i), lengths.get(i));
 			for (int j=0; j<ids.length; j++)
 				chunkIDPool.add(ids[j]);
 		}
 		
-		Iterator<Integer> idPool = chunkIDPool.iterator();
-		
+		Iterator<Integer> idPool = chunkIDPool.iterator();		
 		while (idPool.hasNext()){
 			Path file = new Path(in, idPool.next().toString());
-			//System.out.printf("has chunk %s", file);
+			System.out.printf("has chunk %s", file);
 			FileInputFormat.addInputPath(job, file);
 		}
 	}

@@ -218,7 +218,7 @@ public class Tools {
 			if (x[i] != y[i])
 				return 1;
 		}
-		return 0;
+		return 0; //if equal
 	}
 	
 	public static int compareChunk(Pair<int[], int[]> a, Pair<int[], int[]> b) {
@@ -226,6 +226,6 @@ public class Tools {
 				(compareIntArray(a.getRight(), b.getRight()) !=0))
 			return 1;
 		
-		return 0;
+		return 0; //if equal
 	}
 }
