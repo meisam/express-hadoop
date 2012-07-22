@@ -216,7 +216,6 @@ public class HDFSetQuery extends Configured implements Tool {
 	    
 	    final Path inDir = new Path(args[6]);
 	    final Path outDir = new Path(args[7]);
-	    FileInputFormat.setInputPaths(job, inDir);
 	    FileOutputFormat.setOutputPath(job, outDir);
 	    
 	    addInputSplits(job, inDir, origData, offsets, lengths);
@@ -239,7 +238,7 @@ public class HDFSetQuery extends Configured implements Tool {
 		Iterator<Integer> idPool = chunkIDPool.iterator();		
 		while (idPool.hasNext()){
 			Path file = new Path(in, idPool.next().toString());
-			System.out.printf("has chunk %s", file);
+			System.out.printf("has chunk %s\n", file);
 			FileInputFormat.addInputPath(job, file);
 		}
 	}
