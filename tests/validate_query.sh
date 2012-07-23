@@ -27,7 +27,7 @@ twoQueries(){
 	$EXEC fs -rmr ${INDIR};
 	$EXEC fs -rmr ${OUTDIR};
 	$TESTDIR/genBase.sh pureGen ${RECINFO} ${INDIR};
-	$TESTDIR/queryBase.sh pureQuery ${RECINFO} "32,32,32 256,256,256" "128,128,128 192,128,64" ${INDIR} ${OUTDIR};
+	$TESTDIR/queryBase.sh pureQuery ${RECINFO} "32,32,32;256,256,256" "128,128,128;192,128,64" ${INDIR} ${OUTDIR};
 }
 
 eval "$@";

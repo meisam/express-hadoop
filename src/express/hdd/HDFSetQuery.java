@@ -217,7 +217,6 @@ public class HDFSetQuery extends Configured implements Tool {
 	    final Path inDir = new Path(args[6]);
 	    final Path outDir = new Path(args[7]);
 	    FileOutputFormat.setOutputPath(job, outDir);
-	    
 	    addInputSplits(job, inDir, origData, offsets, lengths);
 		
 		JobClient.runJob(job);    

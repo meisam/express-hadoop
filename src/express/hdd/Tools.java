@@ -204,7 +204,7 @@ public class Tools {
 	
 	public static ArrayList<int[]> str2IntArrayList(String in) throws Exception {
 		ArrayList<int[]> out = new ArrayList<int[]>();
-		String[] sins = in.replaceAll("[ ]++", " ").split(" ");
+		String[] sins = in.replaceAll("[ ]++", "").split(";");
 		for(int i=0; i<sins.length; i++) {
 			out.add(StringArray2IntArray(sins[i].split(",")));
 		}
