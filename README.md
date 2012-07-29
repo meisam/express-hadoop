@@ -14,7 +14,7 @@ EXPRESS is proposed to enable efficient processing of high-dimensional scientifi
 ##Steps
 1. [Apply express patch to hadoop-1.0.1](http://wiki.apache.org/hadoop/HowToContribute)
 
-    ``cd $HADOOP_HOME && patch -p0 < express-hadoop-1.0.1.patch``
+    ``cd $HADOOP_HOME && patch -p0 < $EXPRESS_HOME/express-hadoop-1.0.1.patch``
 
 2. Create express-hadoop.jar
 
