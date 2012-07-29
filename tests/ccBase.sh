@@ -1,7 +1,7 @@
 #!/bin/bash
 # Conflict Calculator
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 
 pureCC() {
 	local INDIR=$1;

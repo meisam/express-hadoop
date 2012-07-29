@@ -1,7 +1,7 @@
 #!/bin/bash
 # Validate HDF Set Query
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 #####################
 
 oneQuery(){

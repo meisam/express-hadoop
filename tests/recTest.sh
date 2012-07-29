@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 
 FLIST=$1;
 REPS=$2;

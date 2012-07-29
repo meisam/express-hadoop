@@ -1,7 +1,7 @@
 #!/bin/bash
 #Test for block reconstruction
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 
 NODES=$(cat $CONF);
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 # HDF Set Query
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 CLASS=express.hdd.HDFSetQuery;
 
 pureQuery() {

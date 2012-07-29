@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-source `dirname $0`/../conf/.env;
+source `dirname $0`/../conf/express-env.sh;
 
 FLIST="$($EXEC fs -ls 2>/dev/null|grep data|awk '{print $8}')";
 REPS="1";
