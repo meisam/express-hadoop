@@ -1,5 +1,7 @@
 #!/bin/bash
 
+source `dirname $0`/../conf/express-env.sh;
+
 flush() {
 	local _NODES=$1;
 	echo "clear cache on nodes {${_NODES}}"
