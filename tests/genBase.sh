@@ -1,5 +1,5 @@
 #!/bin/bash
-# Conflict Calculator
+# HDFGen
 
 source `dirname $0`/../conf/express-env.sh;
 
