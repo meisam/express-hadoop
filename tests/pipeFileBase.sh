@@ -13,8 +13,8 @@ pureMakePF() {
 
 testMakePF() {
 	echo "testMakePF $@";
-	$EXEC fs -rmr hdf-pipeFile;
-	pureMakePF 8 hdf-pipeFile;
+	$EXEC fs -rmr hdf-pipe;
+	pureMakePF 8 hdf-pipe;
 }
 
 eval "$@"; 

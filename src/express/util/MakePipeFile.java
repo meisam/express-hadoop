@@ -58,7 +58,7 @@ public class MakePipeFile extends Configured implements Tool {
 
 	    	Path pipeFile = new Path(OutputDir, offset.toString());
 	    	final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
-	    			, pipeFile, Text.class, Text.class, CompressionType.NONE);
+	    			, pipeFile, null, null, CompressionType.NONE);
 	    	writer.close();
 	    }
 	  }
