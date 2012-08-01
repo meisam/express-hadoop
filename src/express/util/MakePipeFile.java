@@ -126,7 +126,7 @@ public class MakePipeFile extends Configured implements Tool {
 
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
-		int res = ToolRunner.run(new JobConf(), new HDFGen(), args);
+		int res = ToolRunner.run(new JobConf(), new MakePipeFile(), args);
 	    System.exit(res);
 	}
 }
