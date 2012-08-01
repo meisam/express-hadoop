@@ -13,8 +13,11 @@ flush() {
 
 format() {
 	local NEWCONF=$1;
+	if [ "$NEWCONF" != "" ]; then
+		cp $NEWCONF $CONF;
+	fi
+	
 	$BIN/stop-all.sh;
-	cp $NEWCONF $CONF;
 	NODES=$(cat $CONF);
 	$TOOLDIR/_quickinit.sh "$NODES" "/home/siyuan_hadoop10" "/mnt/common/siyuan/src/hadoop-1.0.1/logs/";
 	$EXEC namenode -format;
