@@ -1,7 +1,6 @@
 package express.util;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -23,9 +22,6 @@ import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.SequenceFileInputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
-import express.hdd.HDFGen;
-import express.hdd.HDFGen.HDFGenMapper;
 
 public class MakePipeFile extends Configured implements Tool {
 	static private final Path TMP_DIR = new Path("MICRO_HDF_TMP");
