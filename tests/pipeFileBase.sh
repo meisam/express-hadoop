@@ -8,7 +8,7 @@ pureMakePF() {
 	local pipeNum=$1; 
 	local outDir=$2;
 	
-	$EXEC jar $JAR express.util.MakePipeFile $pipeNum $outDir;
+	$EXEC jar $JAR express.util.MakePipeFile $pipeNum $outDir 2>/dev/null;
 }
 
 testMakePF() {
