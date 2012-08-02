@@ -57,8 +57,12 @@ public class MakePipeFile extends Configured implements Tool {
               Reporter reporter) throws IOException {
 
 	    	Path pipeFile = new Path(OutputDir, offset.toString());
+	    	//null keyClass and value would cause error, while the current prototype 
+	    	//  is taking advantage of that error's consequence, which is zero size files.
+	    	//And the fact that an unschedulable mapper would be generated for every zero size 
+	    	//  file makes the error even more amicable.
 	    	final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
-	    			, pipeFile, null, null, CompressionType.NONE);
+	    			, pipeFile, null, null, CompressionType.NONE); 
 	    	writer.close();
 	    }
 	  }
