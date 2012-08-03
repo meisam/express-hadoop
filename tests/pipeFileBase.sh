@@ -30,7 +30,7 @@ touchPipe() {
 	local outDir=$2;
 	
 	$EXEC fs -mkdir $outDir;
-	for i in $(seq 1 $pipeNum); do 
+	for i in $(seq 0 $((${pipeNum} -1))); do 
 		$EXEC fs -touchz $outDir/${i};  
 	done
 }
