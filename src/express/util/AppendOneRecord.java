@@ -22,6 +22,7 @@ public class AppendOneRecord extends Configured implements Tool {
 		FileSystem fs = FileSystem.get(job);
 		String file = args[0];
 		
+		int roffset[] = {0,0,0};
 		int rlength[] = {8,16,8};
 		int rsize = Tools.cumulativeProduction(rlength);
 		byte[] buffer = new byte[rsize];
@@ -31,7 +32,7 @@ public class AppendOneRecord extends Configured implements Tool {
 		final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
     			, fileFile, Text.class, Text.class, CompressionType.NONE);
 		
-		writer.append(new Text(Arrays.toString(rlength)), new Text(buffer));
+		writer.append(Tools.pair2Text(roffset, rlength), new Text(buffer));
 		writer.close();
 		
 		return 0;
