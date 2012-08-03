@@ -11,11 +11,11 @@ pureMakePF() {
 	$EXEC jar $JAR express.util.MakePipeFile $pipeNum $outDir 2>/dev/null;
 }
 
-pureAppend2File() {
+pureAppendRecord() {
 	echo "pureAppend2File $@";
 	local FILEPATH=$1;
 	
-	$EXEC jar $JAR express.util.AppendSth2File $FILEPATH;
+	$EXEC jar $JAR express.util.AppendOneRecord $FILEPATH;
 }
 
 testMakePF() {
