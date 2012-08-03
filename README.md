@@ -63,7 +63,11 @@ The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network t
 
 #Features#
 **Incongruent Partition** enable different partition for each replica of the same data.
+
+
 **Locality Aware Reducer Scheduling** takes into account the data produced by the mapper and its locality. Task scheduler therefore makes decision to minimize the data movement between mappers and reducers over network.
+
+
 **PipeFile** Unlike pipelines in Hadoop which enables data streaming to external local program, pipeFile is a powerful solution to connect two or more MapReduce jobs. It borrows the idea from Unix pipeline, while apply it into a distributed system.
 
 #People#
