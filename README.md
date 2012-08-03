@@ -55,13 +55,16 @@ To analyze the data for a special purpose like geometric correction or mineral s
   <br><figcaption><b>Figure 2</b> Data Usage and Storage Partitioning</figcaption>
 </figure>
 
-1. In traditional MapReduce, the data partitioning and distribution are not directly controlled by the user. So when the data usage pattern is illustrated by the top cube in Figure 2(b), the data may be actually partitioned as cubes in Figure 2(a).
+1. In traditional MapReduce, the data partition and distribution are not directly controlled by the user. So when the data usage pattern is illustrated by the top cube in Figure 2(b), the data may be actually partitioned as cubes in Figure 2(a).
  
 2. Various usage patterns (partitioning) could be applied to the same chunk of data, depending on the analysis being performed. For instance, change detection tasks require broad spatial regions, and several adjacent spectral layers; signal processing tasks have no spatial region requirement, but a partition needs to contain all the spectral layers for one pixel. Figure 2(b) gives three possible usage patterns.
 
 The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network traffic and synchronization. Figure 2(d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure 2(d). When storage matches the data usage as described in Figure 2(e), data locality is preserved and the system becomes scalable again.
 
-#Design#
+#Features#
+**Incongruent Partition** enable different partition for each replica of the same data.
+**Locality Aware Reducer Scheduling** takes into account the data produced by the mapper and its locality. Task scheduler therefore makes decision to minimize the data movement between mappers and reducers over network.
+**PipeFile** Unlike pipelines in Hadoop which enables data streaming to external local program, pipeFile is a powerful solution to connect two or more MapReduce jobs. It borrows the idea from Unix pipeline, while apply it into a distributed system.
 
 #People#
 * Developer: [Siyuan Ma](http://siyuan.biz)
