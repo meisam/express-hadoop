@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Express-hadoop by s1van</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Express-hadoop</h1>
+        <p>A Hadoop extension to support efficient high dimensional array query and analysis</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/s1van/express-hadoop" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/s1van/express-hadoop/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/s1van/express-hadoop/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h1>Introduction</h1>
+
+<p>EXPRESS is proposed to enable efficient processing of high-dimensional scientific data. It takes advantage of prior knowledge in <strong>data structure</strong> and <strong>data usage pattern</strong>. By performing <strong>incongruent data partitioning</strong> and <strong>locality aware task scheduling</strong>, EXPRESS effectively reduces the network traffic and task execution time. Highlighted features involve:</p>
+
+<ul>
+<li>User interfaces to describe and use data in a <strong>structure-aware</strong> language. </li>
+<li>A novel <strong>incongruent data partitioning</strong> scheme for replicas. EXPRESS supports the coexistence of multiple data partitioning for the same data. It also introduces a set of optimizations to fully realize the potential of incongruent partitioning.</li>
+<li>Data <strong>layout aware</strong> task selection and scheduling. By exposing data layout information, the EXPRESS scheduler collocates the map/reduce tasks with related data. When data layout matches its usage pattern, EXPRESS can select the proper map task to accelerate the data loading.</li>
+</ul><h1>Installation</h1>
+
+<h2>Prerequirement</h2>
+
+<p><strong>Packages</strong> hadoop-1.0.1, ant, patch</p>
+
+<p><strong>Environmental Variables</strong> HADOOP_HOME</p>
+
+<h2>Steps</h2>
+
+<ol>
+<li>
+<p><a href="http://wiki.apache.org/hadoop/HowToContribute">Apply express patch to hadoop-1.0.1</a></p>
+
+<p><code>cd $HADOOP_HOME &amp;&amp; patch -p0 &lt; $EXPRESS_HOME/express-hadoop-1.0.1.patch</code></p>
+</li>
+<li>
+<p>Create express-hadoop.jar</p>
+
+<p><code>ant -f build.xml jar</code></p>
+</li>
+<li><p>Edit ${EXPRESS_ROOT}/test/env.sh to set the path of Hadoop and Express </p></li>
+<li>
+<p>Recompile hadoop-1.0.1</p>
+
+<p><code>ant -f build.xml compile</code></p>
+</li>
+</ol><h1>How To</h1>
+
+<ul>
+<li>
+<p>Use express.hdd.HDFGen to generate test data with specifc partitioning scheme</p>
+
+<p><code>bin/hadoop jar express-hadoop.jar hdf.test.HDFGen [dataSize] [partitionOffset] [recordSize] [partitionSize] [outDir]</code></p>
+</li>
+<li>
+<p>Use express.hdd.HDFMicroBenchmark to load data with specific pattern</p>
+
+<p><code>bin/hadoop jar express-hadoop.jar hdf.test.HDFMicroBenchmark [dataSize] [chunkOffset] [chunkSize] [inDir] [outDir]</code></p>
+</li>
+<li><p>run tests/validate.sh for validation</p></li>
+</ul><h1>A Motivating Case</h1>
+
+<p><strong>Hyperspectral data</strong> is usually collected by sensors on an airborne or spaceborne platform. It is a valuable data source for many critical applications, such as mineral exploration, agricultural assessment, and special target recognition. Figure below shows a representative image of a hyperspectral cube. </p>
+
+<img src="http://upload.wikimedia.org/wikipedia/en/4/48/HyperspectralCube.jpg" title="Graphic representation of hyperspectral data" alt="Graphic representation of hyperspectral data" height="160" width="160"><br><b>Figure 1</b> Graphic representation of hyperspectral data<p>The image consists of two spatial dimensions and one spectral dimension. Terabytes of such data have been produced daily by EOS satellites since 1997. The accumulation of global hyperspectral datasets now reaches the petabytes scale. </p>
+
+<p>To analyze the data for a special purpose like geometric correction or mineral searching, the data needs to be partitioned regularly as the top cube shown in below Figure (a). The partitions then can be processed independently. MapReduce seems the proper solution at first, but two issues are readily apparent:</p>
+
+<a href="https://picasaweb.google.com/lh/photo/xvx5i6rLQwl2BNaZ4ps5pNMTjNZETYmyPJy0liipFm0?feat=embedwebsite"><img src="https://lh5.googleusercontent.com/-KE6-S-6Jq6M/T9Jo0BKGbbI/AAAAAAAAAAk/KlekTZmfBmE/s640/mot.png" title="Data Usage and Storage Partitioning" height="514" width="640"></a>
+  
+  <br><b>Figure 2</b> Data Usage and Storage Partitioning<ol>
+<li><p>In traditional MapReduce, the data partition and distribution are not directly controlled by the user. So when the data usage pattern is illustrated by the top cube in Figure 2(b), the data may be actually partitioned as cubes in Figure 2(a).</p></li>
+<li><p>Various usage patterns (partitioning) could be applied to the same chunk of data, depending on the analysis being performed. For instance, change detection tasks require broad spatial regions, and several adjacent spectral layers; signal processing tasks have no spatial region requirement, but a partition needs to contain all the spectral layers for one pixel. Figure 2(b) gives three possible usage patterns.</p></li>
+</ol><p>The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network traffic and synchronization. Figure 2(d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure 2(d). When storage matches the data usage as described in Figure 2(e), data locality is preserved and the system becomes scalable again.</p>
+
+<h1>Features</h1>
+
+<p><strong>Incongruent Partition</strong> enables different partition for each replica of the same data.</p>
+
+<p><strong>Locality Aware Reducer Scheduling</strong> takes into account the data produced by the mapper and its locality. Task scheduler therefore makes decision to minimize the data movement between mappers and reducers over network.</p>
+
+<p><strong>PipeFile</strong> Unlike pipelines in Hadoop which enable data streaming to external local program, pipeFile is a powerful solution to connect two or more MapReduce jobs. It borrows the idea from Unix named pipe, while apply it into a distributed system.</p>
+
+<h1>People</h1>
+
+<ul>
+<li>Developer: <a href="http://siyuan.biz">Siyuan Ma</a>
+</li>
+<li>Faculty: <a href="http://www.cs.iit.edu/%7Escs/sun/">Xian-He Sun</a>, 
+       <a href="http://www.mcs.anl.gov/%7Erross/">Robert Ross</a>
+</li>
+</ul>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/s1van">s1van</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
