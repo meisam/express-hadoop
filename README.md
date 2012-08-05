@@ -62,13 +62,13 @@ To analyze the data for a special purpose like geometric correction or mineral s
 The storage-usage mismatch in Figure 2(a) and Figure 2(b) causes extra network traffic and synchronization. Figure 2(d) shows that in order to collect the red chunk of data for processing, nine blocks are accessed. Since data blocks are distributed over all nodes in the system, network latency variance and maximum bandwidth limitations could greatly slow down this data access. Due to the absence of data locality, the scalability of the map task stage degrades enormously in the scenario represented by Figure 2(d). When storage matches the data usage as described in Figure 2(e), data locality is preserved and the system becomes scalable again.
 
 #Features#
-**Incongruent Partition** enable different partition for each replica of the same data.
+**Incongruent Partition** enables different partition for each replica of the same data.
 
 
 **Locality Aware Reducer Scheduling** takes into account the data produced by the mapper and its locality. Task scheduler therefore makes decision to minimize the data movement between mappers and reducers over network.
 
 
-**PipeFile** Unlike pipelines in Hadoop which enables data streaming to external local program, pipeFile is a powerful solution to connect two or more MapReduce jobs. It borrows the idea from Unix pipeline, while apply it into a distributed system.
+**PipeFile** Unlike pipelines in Hadoop which enable data streaming to external local program, pipeFile is a powerful solution to connect two or more MapReduce jobs. It borrows the idea from Unix named pipe, while apply it into a distributed system.
 
 #People#
 * Developer: [Siyuan Ma](http://siyuan.biz)
