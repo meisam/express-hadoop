@@ -12,9 +12,9 @@ flush() {
 }
 
 format() {
-	local NEWCONF=$1;
-	if [ "$NEWCONF" != "" ]; then
-		cp $NEWCONF $CONF;
+	local NEWSLAVES=$1;
+	if [ "$NEWSLAVES" != "" ]; then
+		cp $NEWSLAVES $CONF/slaves;
 	fi
 	
 	$BIN/stop-all.sh;
