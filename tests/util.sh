@@ -14,7 +14,7 @@ flush() {
 format() {
 	local NEWSLAVES=$1;
 	if [ "$NEWSLAVES" != "" ]; then
-		cp $NEWSLAVES $CONF/slaves;
+		cp $NEWSLAVES $CONF;
 	fi
 	
 	$BIN/stop-all.sh;
@@ -41,7 +41,7 @@ reset() {
 
 list-blocks() {
 	local DIR=$(python $TOOLDIR/orc-xonf.py --print -f "$CONF_DIR/core-site.xml" -k 'hadoop.tmp.dir');
-	cat $CONF/slaves|xargs -I {} ssh {} eval 'hostname && ls -l /home/siyuan_hadoop10/dfs/data/current|grep -v meta|grep blk_'
+	cat $CONF_DIR/slaves|xargs -I {} ssh {} eval 'hostname && ls -l /home/siyuan_hadoop10/dfs/data/current|grep -v meta|grep blk_'
 }
 
 eval "$@";
