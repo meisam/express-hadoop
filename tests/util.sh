@@ -39,4 +39,9 @@ reset() {
 	$EXEC dfsadmin -safemode wait;
 }
 
+list-blocks() {
+	local DIR=$(python $TOOLDIR/orc-xonf.py --print -f "$CONF_DIR/core-site.xml" -k 'hadoop.tmp.dir');
+	cat $CONF/slaves|xargs -I {} ssh {} eval 'hostname && ls -l /home/siyuan_hadoop10/dfs/data/current|grep -v meta|grep blk_'
+}
+
 eval "$@";
