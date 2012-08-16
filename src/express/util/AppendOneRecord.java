@@ -29,10 +29,9 @@ public class AppendOneRecord extends Configured implements Tool {
 		int rsize = Tools.cumulativeProduction(rlength);
 		byte[] buffer = new byte[rsize];
 		
-		Path fileFile = new Path(file);
-
+		Path filepath = new Path(file);
 		final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
-    			, fileFile, Text.class, Text.class, CompressionType.NONE);
+    			, filepath, Text.class, Text.class, CompressionType.NONE);
 		
 		writer.append(Tools.pair2Text(roffset, rlength), new Text(buffer));
 		writer.close();
