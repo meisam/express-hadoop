@@ -14,12 +14,15 @@ pureMakePF() {
 pureAppendRecord() {
 	echo "pureAppend2File $@";
 	local FILEPATH=$1;
+	local OFFSET=$2;
+	local LENGTH=$3;
 	
-	$EXEC jar $JAR express.util.AppendOneRecord $FILEPATH;
+	$EXEC jar $JAR express.util.AppendOneRecord $FILEPATH $OFFSET $LENGTH;
 }
 
 testMakePF() {
 	echo "testMakePF $@";
+
 	$EXEC fs -rmr hdf-pipe;
 	pureMakePF 8 hdf-pipe;
 }

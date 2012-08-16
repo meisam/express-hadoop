@@ -21,9 +21,11 @@ public class AppendOneRecord extends Configured implements Tool {
 		JobConf job = (JobConf) getConf();
 		FileSystem fs = FileSystem.get(job);
 		String file = args[0];
+		job.set("RecordOffset", args[1]);
+		job.set("RecordLength", args[2]);
 		
-		int roffset[] = {0,0,0};
-		int rlength[] = {8,16,8};
+		int roffset[] = Tools.getHDFVectorFromConf(job, "RecordOffset");
+		int rlength[] = Tools.getHDFVectorFromConf(job, "RecordLength");
 		int rsize = Tools.cumulativeProduction(rlength);
 		byte[] buffer = new byte[rsize];
 		
