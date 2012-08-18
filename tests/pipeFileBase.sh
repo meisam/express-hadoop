@@ -38,12 +38,4 @@ touchPipe() {
 	done
 }
 
-pipeFileTest01() {
-	touchPipe 8 hdf-pipe;
-	$TESTDIR/validate.sh pureBM 64,16,8 0,0,0 8,16,8 1,1,1 0,0,0 8,16,8 hdf-pipe match.r1 &
-	for fid in $(seq 0 7); do
-		pureAppendRecord /user/siyuan/hdf-pipe/${fid} $((8*${fid})),8,8 8,16,8;
-	done
-}
-
 eval "$@"; 
