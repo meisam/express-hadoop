@@ -3,7 +3,7 @@ package express.hdd;
 import org.apache.hadoop.io.RawComparator;
 import org.apache.hadoop.io.Text;
 
-public class HDFoutputvaluegroupingcomparator implements RawComparator<Text> {
+public class HDFOutputValueGroupingComparator implements RawComparator<Text> {
 
 	@Override
 	public int compare(byte[] b1, int s1, int l1, byte[] b2, int s2, int l2) {

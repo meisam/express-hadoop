@@ -14,4 +14,4 @@ r-pipe-w() {
 	done
 }
 
-eval "$@"; 
+eval "$@";

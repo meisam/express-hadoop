@@ -28,6 +28,8 @@ public class AppendOneRecord extends Configured implements Tool {
 		int rlength[] = Tools.getHDFVectorFromConf(job, "RecordLength");
 		int rsize = Tools.cumulativeProduction(rlength);
 		byte[] buffer = new byte[rsize];
+		for(int i=0; i < rsize; i++)
+            buffer[i] = (byte)('0' + i % 20);
 		
 		Path filepath = new Path(file);
 		final SequenceFile.Writer writer = SequenceFile.createWriter(fs, job
